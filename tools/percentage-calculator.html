@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Percentage Calculator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Calculate percentages, increases, decreases, and more with this versatile calculator.
+                        </p>
+
+                        <!-- Calculation Mode -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Calculation Mode</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modePercentage" value="percentage" checked>
+                                            <label class="btn btn-outline-primary" for="modePercentage">What is X% of Y?</label>
+                                            
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modeIncrease" value="increase">
+                                            <label class="btn btn-outline-primary" for="modeIncrease">X is what % of Y?</label>
+                                            
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modeDecrease" value="decrease">
+                                            <label class="btn btn-outline-primary" for="modeDecrease">X% increase/decrease of Y</label>
+                                            
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modeDifference" value="difference">
+                                            <label class="btn btn-outline-primary" for="modeDifference">% Difference</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Fields -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Input Values</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" id="value1Label">Percentage</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="value1" min="0" step="0.01">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" id="value2Label">Number</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="value2" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" id="calculateButton">
+                                        <i class="fas fa-calculator"></i> Calculate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="card mb-4" id="resultsSection" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Calculation</label>
+                                            <input type="text" class="form-control" id="calculation" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Result</label>
+                                            <input type="text" class="form-control" id="result" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Formula</label>
+                                            <input type="text" class="form-control" id="formula" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Explanation</label>
+                                            <textarea class="form-control" id="explanation" rows="2" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Examples -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common Examples</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Sales Tax</h6>
+                                                <p class="card-text">What is 8.5% of $100?</p>
+                                                <button class="btn btn-outline-primary btn-sm load-example" data-mode="percentage" data-value1="8.5" data-value2="100">
+                                                    Load Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Grade Calculation</h6>
+                                                <p class="card-text">75 is what % of 100?</p>
+                                                <button class="btn btn-outline-primary btn-sm load-example" data-mode="increase" data-value1="75" data-value2="100">
+                                                    Load Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Price Increase</h6>
+                                                <p class="card-text">20% increase of $50</p>
+                                                <button class="btn btn-outline-primary btn-sm load-example" data-mode="decrease" data-value1="20" data-value2="50">
+                                                    Load Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializePercentageCalculator();
+        });
+
+        function initializePercentageCalculator() {
+            // DOM Elements
+            const calculationMode = document.querySelectorAll('input[name="calculationMode"]');
+            const value1Label = document.getElementById('value1Label');
+            const value2Label = document.getElementById('value2Label');
+            const value1 = document.getElementById('value1');
+            const value2 = document.getElementById('value2');
+            const calculateButton = document.getElementById('calculateButton');
+            const resultsSection = document.getElementById('resultsSection');
+            const calculation = document.getElementById('calculation');
+            const result = document.getElementById('result');
+            const formula = document.getElementById('formula');
+            const explanation = document.getElementById('explanation');
+            const loadExampleButtons = document.querySelectorAll('.load-example');
+
+            // Update labels based on calculation mode
+            function updateLabels(mode) {
+                switch (mode) {
+                    case 'percentage':
+                        value1Label.textContent = 'Percentage';
+                        value2Label.textContent = 'Number';
+                        break;
+                    case 'increase':
+                        value1Label.textContent = 'Number';
+                        value2Label.textContent = 'Total';
+                        break;
+                    case 'decrease':
+                        value1Label.textContent = 'Percentage';
+                        value2Label.textContent = 'Number';
+                        break;
+                    case 'difference':
+                        value1Label.textContent = 'First Number';
+                        value2Label.textContent = 'Second Number';
+                        break;
+                }
+            }
+
+            // Calculate percentage
+            function calculatePercentage(percentage, number) {
+                return (percentage / 100) * number;
+            }
+
+            // Calculate percentage of
+            function calculatePercentageOf(number, total) {
+                return (number / total) * 100;
+            }
+
+            // Calculate increase/decrease
+            function calculateIncreaseDecrease(percentage, number) {
+                return number * (1 + (percentage / 100));
+            }
+
+            // Calculate percentage difference
+            function calculatePercentageDifference(num1, num2) {
+                return Math.abs((num1 - num2) / ((num1 + num2) / 2)) * 100;
+            }
+
+            // Display results
+            function displayResults(mode, value1, value2, result) {
+                let calcText = '';
+                let formulaText = '';
+                let explanationText = '';
+
+                switch (mode) {
+                    case 'percentage':
+                        calcText = `${value1}% of ${value2}`;
+                        formulaText = `(${value1} / 100) × ${value2}`;
+                        explanationText = `To find ${value1}% of ${value2}, multiply ${value2} by ${value1} divided by 100.`;
+                        break;
+                    case 'increase':
+                        calcText = `${value1} is what % of ${value2}`;
+                        formulaText = `(${value1} / ${value2}) × 100`;
+                        explanationText = `To find what percentage ${value1} is of ${value2}, divide ${value1} by ${value2} and multiply by 100.`;
+                        break;
+                    case 'decrease':
+                        calcText = `${value1}% of ${value2}`;
+                        formulaText = `${value2} × (1 + (${value1} / 100))`;
+                        explanationText = `To find ${value1}% of ${value2}, multiply ${value2} by 1 plus ${value1} divided by 100.`;
+                        break;
+                    case 'difference':
+                        calcText = `% difference between ${value1} and ${value2}`;
+                        formulaText = `|(${value1} - ${value2}) / ((${value1} + ${value2}) / 2)| × 100`;
+                        explanationText = `To find the percentage difference between ${value1} and ${value2}, divide the absolute difference by the average and multiply by 100.`;
+                        break;
+                }
+
+                calculation.value = calcText;
+                formula.value = formulaText;
+                explanation.value = explanationText;
+                result.value = result.toFixed(2) + (mode === 'percentage' || mode === 'increase' || mode === 'difference' ? '%' : '');
+
+                resultsSection.style.display = 'block';
+            }
+
+            // Calculate button click handler
+            calculateButton.addEventListener('click', () => {
+                const mode = document.querySelector('input[name="calculationMode"]:checked').value;
+                const val1 = parseFloat(value1.value);
+                const val2 = parseFloat(value2.value);
+                let result;
+
+                switch (mode) {
+                    case 'percentage':
+                        result = calculatePercentage(val1, val2);
+                        break;
+                    case 'increase':
+                        result = calculatePercentageOf(val1, val2);
+                        break;
+                    case 'decrease':
+                        result = calculateIncreaseDecrease(val1, val2);
+                        break;
+                    case 'difference':
+                        result = calculatePercentageDifference(val1, val2);
+                        break;
+                }
+
+                displayResults(mode, val1, val2, result);
+            });
+
+            // Mode change handler
+            calculationMode.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateLabels(radio.value);
+                    value1.value = '';
+                    value2.value = '';
+                    resultsSection.style.display = 'none';
+                });
+            });
+
+            // Load example button click handlers
+            loadExampleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const mode = button.dataset.mode;
+                    document.getElementById(`mode${mode.charAt(0).toUpperCase() + mode.slice(1)}`).checked = true;
+                    updateLabels(mode);
+                    value1.value = button.dataset.value1;
+                    value2.value = button.dataset.value2;
+                    calculateButton.click();
+                });
+            });
+
+            // Handle Enter key in inputs
+            [value1, value2].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateButton.click();
+                    }
+                });
+            });
+
+            // Initial setup
+            updateLabels('percentage');
+        }
+    </script>
+    <style>
+        .form-control:read-only {
+            background-color: #f8f9fa;
+        }
+        textarea.form-control:read-only {
+            resize: none;
+        }
+    </style>
+</body>
+</html> 

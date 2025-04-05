@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Size Converter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">File Size Converter</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Convert between different file size units and calculate file sizes.
+                        </p>
+
+                        <!-- Manual Conversion -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Manual Conversion</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="inputValue" class="form-label">Value</label>
+                                        <input type="number" class="form-control" id="inputValue" placeholder="Enter value">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="inputUnit" class="form-label">From Unit</label>
+                                        <select class="form-select" id="inputUnit">
+                                            <option value="bytes">Bytes (B)</option>
+                                            <option value="kb">Kilobytes (KB)</option>
+                                            <option value="mb" selected>Megabytes (MB)</option>
+                                            <option value="gb">Gigabytes (GB)</option>
+                                            <option value="tb">Terabytes (TB)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="outputValue" class="form-label">Converted Value</label>
+                                        <input type="text" class="form-control" id="outputValue" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="outputUnit" class="form-label">To Unit</label>
+                                        <select class="form-select" id="outputUnit">
+                                            <option value="bytes">Bytes (B)</option>
+                                            <option value="kb">Kilobytes (KB)</option>
+                                            <option value="mb">Megabytes (MB)</option>
+                                            <option value="gb" selected>Gigabytes (GB)</option>
+                                            <option value="tb">Terabytes (TB)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">File Size Calculator</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="fileInput" class="form-label">Upload File</label>
+                                    <input type="file" class="form-control" id="fileInput">
+                                </div>
+                                <div id="fileInfo" class="d-none">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">File Name</label>
+                                                <input type="text" class="form-control" id="fileName" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">File Type</label>
+                                                <input type="text" class="form-control" id="fileType" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">File Size</label>
+                                                <input type="text" class="form-control" id="fileSize" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Size in Selected Unit</label>
+                                                <input type="text" class="form-control" id="convertedFileSize" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common File Sizes -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common File Sizes</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>File Type</th>
+                                                <th>Average Size</th>
+                                                <th>In Bytes</th>
+                                                <th>In KB</th>
+                                                <th>In MB</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="commonSizes">
+                                            <!-- Common sizes will be populated dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeFileSizeConverter();
+        });
+
+        function initializeFileSizeConverter() {
+            // DOM Elements
+            const inputValue = document.getElementById('inputValue');
+            const inputUnit = document.getElementById('inputUnit');
+            const outputValue = document.getElementById('outputValue');
+            const outputUnit = document.getElementById('outputUnit');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileType = document.getElementById('fileType');
+            const fileSize = document.getElementById('fileSize');
+            const convertedFileSize = document.getElementById('convertedFileSize');
+            const commonSizes = document.getElementById('commonSizes');
+
+            // Conversion factors
+            const units = {
+                bytes: 1,
+                kb: 1024,
+                mb: 1024 * 1024,
+                gb: 1024 * 1024 * 1024,
+                tb: 1024 * 1024 * 1024 * 1024
+            };
+
+            // Common file sizes
+            const commonFileSizes = [
+                { type: 'Text Document (.txt)', size: 1 * units.kb },
+                { type: 'Word Document (.docx)', size: 20 * units.kb },
+                { type: 'PDF Document', size: 100 * units.kb },
+                { type: 'JPEG Image (Low Quality)', size: 100 * units.kb },
+                { type: 'JPEG Image (High Quality)', size: 2 * units.mb },
+                { type: 'PNG Image', size: 500 * units.kb },
+                { type: 'MP3 Song (3 minutes)', size: 3 * units.mb },
+                { type: 'MP4 Video (1 minute, 720p)', size: 10 * units.mb },
+                { type: 'MP4 Video (1 minute, 1080p)', size: 20 * units.mb }
+            ];
+
+            // Format file size
+            function formatFileSize(bytes, unit) {
+                const value = bytes / units[unit];
+                return value.toFixed(2) + ' ' + unit.toUpperCase();
+            }
+
+            // Convert between units
+            function convertSize(value, fromUnit, toUnit) {
+                const bytes = value * units[fromUnit];
+                return bytes / units[toUnit];
+            }
+
+            // Update manual conversion
+            function updateManualConversion() {
+                const value = parseFloat(inputValue.value);
+                if (isNaN(value)) {
+                    outputValue.value = '';
+                    return;
+                }
+
+                const converted = convertSize(value, inputUnit.value, outputUnit.value);
+                outputValue.value = converted.toFixed(2);
+            }
+
+            // Update common sizes table
+            function updateCommonSizes() {
+                commonSizes.innerHTML = '';
+                commonFileSizes.forEach(file => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${file.type}</td>
+                        <td>${formatFileSize(file.size, 'kb')}</td>
+                        <td>${formatFileSize(file.size, 'bytes')}</td>
+                        <td>${formatFileSize(file.size, 'kb')}</td>
+                        <td>${formatFileSize(file.size, 'mb')}</td>
+                    `;
+                    commonSizes.appendChild(row);
+                });
+            }
+
+            // Handle file upload
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) {
+                    fileInfo.classList.add('d-none');
+                    return;
+                }
+
+                fileInfo.classList.remove('d-none');
+                fileName.value = file.name;
+                fileType.value = file.type || 'Unknown';
+                fileSize.value = formatFileSize(file.size, 'bytes');
+                convertedFileSize.value = formatFileSize(file.size, outputUnit.value);
+            });
+
+            // Event Listeners
+            inputValue.addEventListener('input', updateManualConversion);
+            inputUnit.addEventListener('change', updateManualConversion);
+            outputUnit.addEventListener('change', updateManualConversion);
+
+            // Initial setup
+            updateCommonSizes();
+        }
+    </script>
+    <style>
+        .table th {
+            background-color: #f8f9fa;
+        }
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+</html> 

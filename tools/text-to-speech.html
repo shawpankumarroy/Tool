@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech Converter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Text to Speech Converter</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Convert text to speech with customizable voice options and speech parameters.
+                        </p>
+
+                        <!-- Text Input -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Text Input</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="textInput" rows="5" placeholder="Enter text to convert to speech..."></textarea>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-outline-secondary" id="clearText">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                    <button class="btn btn-primary" id="speakText">
+                                        <i class="fas fa-play"></i> Speak
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Voice Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Voice Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="voiceSelect" class="form-label">Voice</label>
+                                        <select class="form-select" id="voiceSelect">
+                                            <!-- Voices will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="rateSelect" class="form-label">Speech Rate</label>
+                                        <select class="form-select" id="rateSelect">
+                                            <option value="0.5">0.5x (Slow)</option>
+                                            <option value="0.75">0.75x</option>
+                                            <option value="1" selected>1x (Normal)</option>
+                                            <option value="1.25">1.25x</option>
+                                            <option value="1.5">1.5x</option>
+                                            <option value="2">2x (Fast)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="pitchSelect" class="form-label">Pitch</label>
+                                        <select class="form-select" id="pitchSelect">
+                                            <option value="0.5">0.5x (Low)</option>
+                                            <option value="0.75">0.75x</option>
+                                            <option value="1" selected>1x (Normal)</option>
+                                            <option value="1.25">1.25x</option>
+                                            <option value="1.5">1.5x</option>
+                                            <option value="2">2x (High)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="volumeSelect" class="form-label">Volume</label>
+                                        <select class="form-select" id="volumeSelect">
+                                            <option value="0.25">25%</option>
+                                            <option value="0.5">50%</option>
+                                            <option value="0.75">75%</option>
+                                            <option value="1" selected>100%</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Speech Controls -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Speech Controls</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button class="btn btn-outline-primary" id="pauseSpeech" disabled>
+                                        <i class="fas fa-pause"></i> Pause
+                                    </button>
+                                    <button class="btn btn-outline-primary" id="resumeSpeech" disabled>
+                                        <i class="fas fa-play"></i> Resume
+                                    </button>
+                                    <button class="btn btn-outline-danger" id="stopSpeech" disabled>
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>
+                                </div>
+                                <div class="progress mt-3">
+                                    <div class="progress-bar" id="speechProgress" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeTextToSpeech();
+        });
+
+        function initializeTextToSpeech() {
+            // DOM Elements
+            const textInput = document.getElementById('textInput');
+            const voiceSelect = document.getElementById('voiceSelect');
+            const rateSelect = document.getElementById('rateSelect');
+            const pitchSelect = document.getElementById('pitchSelect');
+            const volumeSelect = document.getElementById('volumeSelect');
+            const speakButton = document.getElementById('speakText');
+            const clearButton = document.getElementById('clearText');
+            const pauseButton = document.getElementById('pauseSpeech');
+            const resumeButton = document.getElementById('resumeSpeech');
+            const stopButton = document.getElementById('stopSpeech');
+            const progressBar = document.getElementById('speechProgress');
+
+            // Speech synthesis
+            let speech = new SpeechSynthesisUtterance();
+            let voices = [];
+            let isSpeaking = false;
+            let isPaused = false;
+            let currentCharIndex = 0;
+
+            // Load available voices
+            function loadVoices() {
+                voices = window.speechSynthesis.getVoices();
+                voiceSelect.innerHTML = '';
+                
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    voiceSelect.appendChild(option);
+                });
+            }
+
+            // Update speech parameters
+            function updateSpeechParameters() {
+                speech.voice = voices[voiceSelect.value];
+                speech.rate = parseFloat(rateSelect.value);
+                speech.pitch = parseFloat(pitchSelect.value);
+                speech.volume = parseFloat(volumeSelect.value);
+            }
+
+            // Update progress bar
+            function updateProgress() {
+                if (textInput.value && currentCharIndex > 0) {
+                    const progress = (currentCharIndex / textInput.value.length) * 100;
+                    progressBar.style.width = `${progress}%`;
+                } else {
+                    progressBar.style.width = '0%';
+                }
+            }
+
+            // Event Listeners
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+
+            voiceSelect.addEventListener('change', updateSpeechParameters);
+            rateSelect.addEventListener('change', updateSpeechParameters);
+            pitchSelect.addEventListener('change', updateSpeechParameters);
+            volumeSelect.addEventListener('change', updateSpeechParameters);
+
+            speakButton.addEventListener('click', () => {
+                if (!textInput.value) {
+                    alert('Please enter some text to convert to speech.');
+                    return;
+                }
+
+                if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                }
+
+                speech.text = textInput.value;
+                updateSpeechParameters();
+                
+                speech.onstart = () => {
+                    isSpeaking = true;
+                    speakButton.disabled = true;
+                    pauseButton.disabled = false;
+                    stopButton.disabled = false;
+                    currentCharIndex = 0;
+                };
+
+                speech.onend = () => {
+                    isSpeaking = false;
+                    isPaused = false;
+                    speakButton.disabled = false;
+                    pauseButton.disabled = true;
+                    resumeButton.disabled = true;
+                    stopButton.disabled = true;
+                    currentCharIndex = 0;
+                    updateProgress();
+                };
+
+                speech.onpause = () => {
+                    isPaused = true;
+                    pauseButton.disabled = true;
+                    resumeButton.disabled = false;
+                };
+
+                speech.onresume = () => {
+                    isPaused = false;
+                    pauseButton.disabled = false;
+                    resumeButton.disabled = true;
+                };
+
+                speech.onboundary = (event) => {
+                    if (event.name === 'word') {
+                        currentCharIndex = event.charIndex;
+                        updateProgress();
+                    }
+                };
+
+                window.speechSynthesis.speak(speech);
+            });
+
+            pauseButton.addEventListener('click', () => {
+                if (isSpeaking && !isPaused) {
+                    window.speechSynthesis.pause();
+                }
+            });
+
+            resumeButton.addEventListener('click', () => {
+                if (isSpeaking && isPaused) {
+                    window.speechSynthesis.resume();
+                }
+            });
+
+            stopButton.addEventListener('click', () => {
+                if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                }
+            });
+
+            clearButton.addEventListener('click', () => {
+                textInput.value = '';
+                progressBar.style.width = '0%';
+                if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                }
+            });
+
+            // Initial setup
+            loadVoices();
+            updateSpeechParameters();
+        }
+    </script>
+    <style>
+        .progress {
+            height: 10px;
+        }
+        .progress-bar {
+            background-color: #0d6efd;
+            transition: width 0.1s ease;
+        }
+    </style>
+</body>
+</html> 

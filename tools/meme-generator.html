@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Impact:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Meme Generator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Create your own memes with customizable templates and text options.
+                        </p>
+
+                        <!-- Template Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Choose Template</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="templateContainer">
+                                    <!-- Templates will be added here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meme Editor -->
+                        <div class="card mb-4" id="editorCard" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Meme Editor</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Preview -->
+                                    <div class="col-md-8 mb-4">
+                                        <div class="meme-preview-container">
+                                            <div id="memePreview" class="meme-preview">
+                                                <img id="memeImage" src="" alt="Meme template">
+                                                <div id="topText" class="meme-text top-text">Top Text</div>
+                                                <div id="bottomText" class="meme-text bottom-text">Bottom Text</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Controls -->
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Top Text</label>
+                                            <input type="text" class="form-control" id="topTextInput" placeholder="Enter top text">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Bottom Text</label>
+                                            <input type="text" class="form-control" id="bottomTextInput" placeholder="Enter bottom text">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Font Size</label>
+                                            <input type="range" class="form-range" id="fontSize" min="20" max="100" value="40">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Text Color</label>
+                                            <input type="color" class="form-control form-control-color" id="textColor" value="#ffffff">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Stroke Color</label>
+                                            <input type="color" class="form-control form-control-color" id="strokeColor" value="#000000">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Stroke Width</label>
+                                            <input type="range" class="form-range" id="strokeWidth" min="0" max="10" value="2">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Text Alignment</label>
+                                            <select class="form-select" id="textAlignment">
+                                                <option value="center">Center</option>
+                                                <option value="left">Left</option>
+                                                <option value="right">Right</option>
+                                            </select>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" id="downloadMeme">
+                                                <i class="fas fa-download"></i> Download Meme
+                                            </button>
+                                            <button class="btn btn-outline-primary" id="shareMeme">
+                                                <i class="fas fa-share"></i> Share Meme
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Custom Image -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Upload Custom Image</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <input type="file" class="form-control" id="customImage" accept="image/*">
+                                </div>
+                                <div class="alert alert-info">
+                                    Upload your own image to create a custom meme template
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeMemeGenerator();
+        });
+
+        function initializeMemeGenerator() {
+            const templateContainer = document.getElementById('templateContainer');
+            const editorCard = document.getElementById('editorCard');
+            const memeImage = document.getElementById('memeImage');
+            const topText = document.getElementById('topText');
+            const bottomText = document.getElementById('bottomText');
+            const topTextInput = document.getElementById('topTextInput');
+            const bottomTextInput = document.getElementById('bottomTextInput');
+            const fontSize = document.getElementById('fontSize');
+            const textColor = document.getElementById('textColor');
+            const strokeColor = document.getElementById('strokeColor');
+            const strokeWidth = document.getElementById('strokeWidth');
+            const textAlignment = document.getElementById('textAlignment');
+            const customImage = document.getElementById('customImage');
+
+            // Templates
+            const templates = [
+                {
+                    id: 'template1',
+                    name: 'Distracted Boyfriend',
+                    image: 'distracted-boyfriend.jpg'
+                },
+                {
+                    id: 'template2',
+                    name: 'One Does Not Simply',
+                    image: 'one-does-not-simply.jpg'
+                },
+                {
+                    id: 'template3',
+                    name: 'Two Buttons',
+                    image: 'two-buttons.jpg'
+                },
+                {
+                    id: 'template4',
+                    name: 'Change My Mind',
+                    image: 'change-my-mind.jpg'
+                },
+                {
+                    id: 'template5',
+                    name: 'Drake Hotline Bling',
+                    image: 'drake-hotline-bling.jpg'
+                },
+                {
+                    id: 'template6',
+                    name: 'Expanding Brain',
+                    image: 'expanding-brain.jpg'
+                }
+            ];
+
+            // Render templates
+            templates.forEach(template => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+                
+                const card = document.createElement('div');
+                card.className = 'card h-100';
+                
+                const img = document.createElement('img');
+                img.className = 'card-img-top meme-template';
+                img.src = `../assets/images/memes/${template.image}`;
+                img.alt = template.name;
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                const title = document.createElement('h5');
+                title.className = 'card-title';
+                title.textContent = template.name;
+                
+                const selectBtn = document.createElement('button');
+                selectBtn.className = 'btn btn-primary w-100';
+                selectBtn.textContent = 'Select Template';
+                selectBtn.onclick = () => selectTemplate(template.image);
+                
+                cardBody.appendChild(title);
+                cardBody.appendChild(selectBtn);
+                
+                card.appendChild(img);
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                templateContainer.appendChild(col);
+            });
+
+            function selectTemplate(imagePath) {
+                memeImage.src = `../assets/images/memes/${imagePath}`;
+                editorCard.style.display = 'block';
+                // Scroll to editor
+                editorCard.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Event Listeners
+            topTextInput.addEventListener('input', () => {
+                topText.textContent = topTextInput.value;
+            });
+
+            bottomTextInput.addEventListener('input', () => {
+                bottomText.textContent = bottomTextInput.value;
+            });
+
+            fontSize.addEventListener('input', () => {
+                const size = fontSize.value + 'px';
+                topText.style.fontSize = size;
+                bottomText.style.fontSize = size;
+            });
+
+            textColor.addEventListener('input', () => {
+                topText.style.color = textColor.value;
+                bottomText.style.color = textColor.value;
+            });
+
+            strokeColor.addEventListener('input', () => {
+                const stroke = strokeWidth.value + 'px ' + strokeColor.value;
+                topText.style.webkitTextStroke = stroke;
+                bottomText.style.webkitTextStroke = stroke;
+            });
+
+            strokeWidth.addEventListener('input', () => {
+                const stroke = strokeWidth.value + 'px ' + strokeColor.value;
+                topText.style.webkitTextStroke = stroke;
+                bottomText.style.webkitTextStroke = stroke;
+            });
+
+            textAlignment.addEventListener('change', () => {
+                topText.style.textAlign = textAlignment.value;
+                bottomText.style.textAlign = textAlignment.value;
+            });
+
+            customImage.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        memeImage.src = e.target.result;
+                        editorCard.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Download functionality
+            document.getElementById('downloadMeme').addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    // Draw image
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Draw text
+                    ctx.font = `${fontSize.value}px Impact`;
+                    ctx.fillStyle = textColor.value;
+                    ctx.strokeStyle = strokeColor.value;
+                    ctx.lineWidth = strokeWidth.value;
+                    ctx.textAlign = textAlignment.value;
+                    
+                    // Draw top text
+                    ctx.strokeText(topTextInput.value, canvas.width/2, 50);
+                    ctx.fillText(topTextInput.value, canvas.width/2, 50);
+                    
+                    // Draw bottom text
+                    ctx.strokeText(bottomTextInput.value, canvas.width/2, canvas.height - 50);
+                    ctx.fillText(bottomTextInput.value, canvas.width/2, canvas.height - 50);
+                    
+                    // Download
+                    const link = document.createElement('a');
+                    link.download = 'meme.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                };
+                
+                img.src = memeImage.src;
+            });
+
+            // Share functionality
+            document.getElementById('shareMeme').addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Check out this meme!',
+                        text: 'I created this meme using the Multi-Tools Hub Meme Generator',
+                        url: window.location.href
+                    });
+                } else {
+                    alert('Sharing is not supported in your browser');
+                }
+            });
+        }
+    </script>
+    <style>
+        .meme-preview-container {
+            position: relative;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.25rem;
+        }
+        .meme-preview {
+            position: relative;
+            max-width: 100%;
+        }
+        .meme-preview img {
+            max-width: 100%;
+            height: auto;
+        }
+        .meme-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-family: 'Impact', sans-serif;
+            color: white;
+            text-shadow: 2px 2px 0 #000,
+                        -2px -2px 0 #000,
+                        2px -2px 0 #000,
+                        -2px 2px 0 #000;
+            font-size: 40px;
+            padding: 0 10px;
+            word-wrap: break-word;
+        }
+        .top-text {
+            top: 10px;
+        }
+        .bottom-text {
+            bottom: 10px;
+        }
+        .meme-template {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</body>
+</html> 

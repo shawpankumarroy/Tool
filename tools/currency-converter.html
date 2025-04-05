@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Currency Converter</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Convert between different currencies with real-time exchange rates.
+                        </p>
+
+                        <!-- Currency Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Currency Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="fromCurrency" class="form-label">From Currency</label>
+                                        <select class="form-select" id="fromCurrency">
+                                            <!-- Currencies will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="toCurrency" class="form-label">To Currency</label>
+                                        <select class="form-select" id="toCurrency">
+                                            <!-- Currencies will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Amount Input -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Amount</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="amountInput" class="form-label">Amount</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="fromCurrencySymbol">$</span>
+                                            <input type="number" class="form-control" id="amountInput" placeholder="Enter amount">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="convertedAmount" class="form-label">Converted Amount</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="toCurrencySymbol">€</span>
+                                            <input type="text" class="form-control" id="convertedAmount" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-outline-secondary" id="clearAmount">
+                                        <i class="fas fa-eraser"></i> Clear
+                                    </button>
+                                    <button class="btn btn-primary" id="convertAmount">
+                                        <i class="fas fa-sync"></i> Convert
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exchange Rate Info -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Exchange Rate Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Current Rate</label>
+                                            <input type="text" class="form-control" id="exchangeRate" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Last Updated</label>
+                                            <input type="text" class="form-control" id="lastUpdated" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historical Data -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Historical Data</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="dateRange" class="form-label">Date Range</label>
+                                    <select class="form-select" id="dateRange">
+                                        <option value="7">Last 7 Days</option>
+                                        <option value="30">Last 30 Days</option>
+                                        <option value="90">Last 90 Days</option>
+                                        <option value="180">Last 6 Months</option>
+                                        <option value="365">Last Year</option>
+                                    </select>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="exchangeRateChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popular Conversions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Popular Conversions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Currency Pair</th>
+                                                <th>Rate</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="popularConversions">
+                                            <!-- Popular conversions will be populated dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeCurrencyConverter();
+        });
+
+        function initializeCurrencyConverter() {
+            // DOM Elements
+            const fromCurrency = document.getElementById('fromCurrency');
+            const toCurrency = document.getElementById('toCurrency');
+            const amountInput = document.getElementById('amountInput');
+            const convertedAmount = document.getElementById('convertedAmount');
+            const clearAmount = document.getElementById('clearAmount');
+            const convertAmount = document.getElementById('convertAmount');
+            const exchangeRate = document.getElementById('exchangeRate');
+            const lastUpdated = document.getElementById('lastUpdated');
+            const dateRange = document.getElementById('dateRange');
+            const fromCurrencySymbol = document.getElementById('fromCurrencySymbol');
+            const toCurrencySymbol = document.getElementById('toCurrencySymbol');
+            const popularConversions = document.getElementById('popularConversions');
+            let exchangeRateChart;
+
+            // Common currencies with symbols
+            const currencies = [
+                { code: 'USD', symbol: '$', name: 'US Dollar' },
+                { code: 'EUR', symbol: '€', name: 'Euro' },
+                { code: 'GBP', symbol: '£', name: 'British Pound' },
+                { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+                { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+                { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+                { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc' },
+                { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
+                { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+                { code: 'BRL', symbol: 'R$', name: 'Brazilian Real' }
+            ];
+
+            // Popular currency pairs
+            const popularPairs = [
+                { from: 'USD', to: 'EUR' },
+                { from: 'EUR', to: 'GBP' },
+                { from: 'USD', to: 'JPY' },
+                { from: 'GBP', to: 'USD' },
+                { from: 'USD', to: 'CAD' }
+            ];
+
+            // Populate currency selectors
+            function populateCurrencies() {
+                currencies.forEach(currency => {
+                    const option = document.createElement('option');
+                    option.value = currency.code;
+                    option.textContent = `${currency.code} - ${currency.name}`;
+                    fromCurrency.appendChild(option.cloneNode(true));
+                    toCurrency.appendChild(option);
+                });
+
+                // Set default currencies
+                fromCurrency.value = 'USD';
+                toCurrency.value = 'EUR';
+                updateCurrencySymbols();
+            }
+
+            // Update currency symbols
+            function updateCurrencySymbols() {
+                const fromCurrencyData = currencies.find(c => c.code === fromCurrency.value);
+                const toCurrencyData = currencies.find(c => c.code === toCurrency.value);
+                fromCurrencySymbol.textContent = fromCurrencyData.symbol;
+                toCurrencySymbol.textContent = toCurrencyData.symbol;
+            }
+
+            // Convert amount
+            function convert() {
+                const amount = parseFloat(amountInput.value);
+                if (isNaN(amount)) {
+                    convertedAmount.value = '';
+                    return;
+                }
+
+                // Simulate exchange rate (in a real app, this would come from an API)
+                const rate = getExchangeRate(fromCurrency.value, toCurrency.value);
+                const converted = amount * rate;
+
+                convertedAmount.value = converted.toFixed(2);
+                exchangeRate.value = `1 ${fromCurrency.value} = ${rate.toFixed(4)} ${toCurrency.value}`;
+                lastUpdated.value = new Date().toLocaleString();
+            }
+
+            // Get exchange rate (simulated)
+            function getExchangeRate(from, to) {
+                // Simulated exchange rates (in a real app, these would come from an API)
+                const rates = {
+                    'USD': { 'EUR': 0.85, 'GBP': 0.73, 'JPY': 110.5, 'AUD': 1.35, 'CAD': 1.25 },
+                    'EUR': { 'USD': 1.18, 'GBP': 0.86, 'JPY': 130.2, 'AUD': 1.59, 'CAD': 1.47 },
+                    'GBP': { 'USD': 1.37, 'EUR': 1.16, 'JPY': 151.3, 'AUD': 1.85, 'CAD': 1.71 },
+                    'JPY': { 'USD': 0.0091, 'EUR': 0.0077, 'GBP': 0.0066, 'AUD': 0.012, 'CAD': 0.011 },
+                    'AUD': { 'USD': 0.74, 'EUR': 0.63, 'GBP': 0.54, 'JPY': 83.2, 'CAD': 0.93 },
+                    'CAD': { 'USD': 0.80, 'EUR': 0.68, 'GBP': 0.58, 'JPY': 89.8, 'AUD': 1.08 }
+                };
+
+                if (from === to) return 1;
+                if (rates[from] && rates[from][to]) return rates[from][to];
+                if (rates[to] && rates[to][from]) return 1 / rates[to][from];
+                return 1;
+            }
+
+            // Update chart
+            function updateChart() {
+                const days = parseInt(dateRange.value);
+                const labels = [];
+                const data = [];
+
+                // Generate historical data (simulated)
+                for (let i = days; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    labels.push(date.toLocaleDateString());
+                    
+                    // Simulate slight variations in exchange rate
+                    const baseRate = getExchangeRate(fromCurrency.value, toCurrency.value);
+                    const variation = (Math.random() - 0.5) * 0.02; // ±2% variation
+                    data.push(baseRate * (1 + variation));
+                }
+
+                if (exchangeRateChart) {
+                    exchangeRateChart.destroy();
+                }
+
+                const ctx = document.getElementById('exchangeRateChart').getContext('2d');
+                exchangeRateChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `${fromCurrency.value} to ${toCurrency.value}`,
+                            data: data,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Populate popular conversions
+            function populatePopularConversions() {
+                popularConversions.innerHTML = '';
+                popularPairs.forEach(pair => {
+                    const rate = getExchangeRate(pair.from, pair.to);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${pair.from}/${pair.to}</td>
+                        <td>${rate.toFixed(4)}</td>
+                        <td>
+                            <button class="btn btn-outline-primary btn-sm use-pair" data-from="${pair.from}" data-to="${pair.to}">
+                                <i class="fas fa-exchange-alt"></i> Use
+                            </button>
+                        </td>
+                    `;
+                    popularConversions.appendChild(row);
+                });
+
+                // Add event listeners to use buttons
+                document.querySelectorAll('.use-pair').forEach(button => {
+                    button.addEventListener('click', () => {
+                        fromCurrency.value = button.dataset.from;
+                        toCurrency.value = button.dataset.to;
+                        updateCurrencySymbols();
+                        convert();
+                        updateChart();
+                    });
+                });
+            }
+
+            // Event Listeners
+            clearAmount.addEventListener('click', () => {
+                amountInput.value = '';
+                convertedAmount.value = '';
+            });
+            convertAmount.addEventListener('click', convert);
+            [fromCurrency, toCurrency].forEach(select => {
+                select.addEventListener('change', () => {
+                    updateCurrencySymbols();
+                    convert();
+                    updateChart();
+                });
+            });
+            amountInput.addEventListener('input', convert);
+            dateRange.addEventListener('change', updateChart);
+
+            // Initial setup
+            populateCurrencies();
+            populatePopularConversions();
+            convert();
+            updateChart();
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+</html> 

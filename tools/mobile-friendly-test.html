@@ -1,0 +1,201 @@
+            function runTest() {
+                const url = websiteUrl.value.trim();
+                if (!url) {
+                    urlStatus.className = 'alert alert-danger';
+                    urlStatus.textContent = 'Please enter a valid website URL';
+                    return;
+                }
+
+                // Validate URL
+                let testUrl;
+                try {
+                    testUrl = new URL(url);
+                    if (!testUrl.protocol.startsWith('http')) {
+                        testUrl = new URL('https://' + url);
+                    }
+                } catch (e) {
+                    urlStatus.className = 'alert alert-danger';
+                    urlStatus.textContent = 'Please enter a valid website URL';
+                    return;
+                }
+
+                // Show loading state
+                urlStatus.className = 'alert alert-info';
+                urlStatus.textContent = 'Testing website...';
+                testButton.disabled = true;
+
+                // Create a test iframe
+                const testFrame = document.createElement('iframe');
+                testFrame.style.display = 'none';
+                document.body.appendChild(testFrame);
+
+                // Set up error handling
+                testFrame.onerror = () => {
+                    handleTestError('Failed to load website');
+                };
+
+                // Set up load handler
+                testFrame.onload = () => {
+                    try {
+                        // Check if the frame loaded successfully
+                        if (testFrame.contentDocument && testFrame.contentDocument.body) {
+                            analyzeWebsite(testFrame.contentDocument);
+                        } else {
+                            handleTestError('Could not access website content');
+                        }
+                    } catch (e) {
+                        handleTestError('Error analyzing website');
+                    } finally {
+                        document.body.removeChild(testFrame);
+                    }
+                };
+
+                // Load the URL
+                testFrame.src = testUrl.toString();
+            }
+
+            function handleTestError(message) {
+                urlStatus.className = 'alert alert-danger';
+                urlStatus.textContent = message;
+                testButton.disabled = false;
+                document.getElementById('resultsCard').style.display = 'none';
+                document.getElementById('previewCard').style.display = 'none';
+            }
+
+            function analyzeWebsite(doc) {
+                // Show results
+                resultsCard.style.display = 'block';
+                previewCard.style.display = 'block';
+                urlStatus.className = 'alert alert-success';
+                urlStatus.textContent = 'Test completed successfully';
+                testButton.disabled = false;
+
+                // Analyze viewport
+                const viewportMeta = doc.querySelector('meta[name="viewport"]');
+                const viewportScore = viewportMeta ? 100 : 0;
+
+                // Analyze text size
+                const textElements = doc.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6');
+                let textSizeScore = 100;
+                textElements.forEach(el => {
+                    const fontSize = window.getComputedStyle(el).fontSize;
+                    if (parseFloat(fontSize) < 12) {
+                        textSizeScore -= 1;
+                    }
+                });
+                textSizeScore = Math.max(0, textSizeScore);
+
+                // Analyze touch elements
+                const touchElements = doc.querySelectorAll('button, a, input[type="button"], input[type="submit"]');
+                let touchScore = 100;
+                touchElements.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width < 44 || rect.height < 44) {
+                        touchScore -= 1;
+                    }
+                });
+                touchScore = Math.max(0, touchScore);
+
+                // Analyze content width
+                const bodyWidth = doc.body.scrollWidth;
+                const viewportWidth = window.innerWidth;
+                const widthScore = bodyWidth <= viewportWidth ? 100 : Math.max(0, 100 - ((bodyWidth - viewportWidth) / viewportWidth * 100));
+
+                // Calculate overall score
+                const overallScore = Math.round((viewportScore + textSizeScore + touchScore + widthScore) / 4);
+
+                // Update scores
+                document.getElementById('overallScore').textContent = `${overallScore}%`;
+                document.getElementById('scoreBar').style.width = `${overallScore}%`;
+
+                // Update individual scores
+                updateScore('viewport', viewportScore);
+                updateScore('textSize', textSizeScore);
+                updateScore('touch', touchScore);
+                updateScore('width', widthScore);
+
+                // Update recommendations
+                updateRecommendations(viewportScore, textSizeScore, touchScore, widthScore);
+
+                // Update preview
+                updatePreview('mobile');
+            }
+
+            function updateRecommendations(viewportScore, textSizeScore, touchScore, widthScore) {
+                const recommendations = [];
+                
+                if (viewportScore < 100) {
+                    recommendations.push('Add a viewport meta tag to ensure proper mobile scaling');
+                }
+                
+                if (textSizeScore < 100) {
+                    recommendations.push('Increase font sizes for better readability on mobile devices');
+                }
+                
+                if (touchScore < 100) {
+                    recommendations.push('Make touch targets at least 44x44 pixels for better usability');
+                }
+                
+                if (widthScore < 100) {
+                    recommendations.push('Ensure content fits within the viewport width');
+                }
+
+                if (recommendations.length === 0) {
+                    recommendations.push('Your website is well-optimized for mobile devices!');
+                }
+
+                const container = document.getElementById('recommendations');
+                container.innerHTML = '';
+
+                recommendations.forEach(rec => {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item';
+                    item.innerHTML = `<i class="fas fa-check-circle text-success me-2"></i>${rec}`;
+                    container.appendChild(item);
+                });
+            }
+
+            function updatePreview(device) {
+                const url = websiteUrl.value;
+                const frame = document.getElementById('previewFrame');
+                
+                // Update device buttons
+                deviceButtons.forEach(button => {
+                    if (button.dataset.device === device) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+
+                // Set frame size based on device
+                switch (device) {
+                    case 'mobile':
+                        frame.style.width = '375px';
+                        frame.style.height = '667px';
+                        break;
+                    case 'tablet':
+                        frame.style.width = '768px';
+                        frame.style.height = '1024px';
+                        break;
+                    case 'desktop':
+                        frame.style.width = '100%';
+                        frame.style.height = '600px';
+                        break;
+                }
+
+                // Load URL in frame with error handling
+                frame.onerror = () => {
+                    frame.src = 'about:blank';
+                    urlStatus.className = 'alert alert-warning';
+                    urlStatus.textContent = 'Could not load preview. Please check the URL.';
+                };
+
+                try {
+                    frame.src = url;
+                } catch (e) {
+                    frame.src = 'about:blank';
+                    urlStatus.className = 'alert alert-warning';
+                    urlStatus.textContent = 'Could not load preview. Please check the URL.';
+                }
+            } 

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Validator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
+    <!-- CSSLint -->
+    <script src="https://cdn.jsdelivr.net/npm/csslint@1.0.5/dist/csslint.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">CSS Validator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Validate and clean CSS code with various options and real-time feedback.
+                        </p>
+
+                        <!-- Validation Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Validation Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="checkBoxModel" checked>
+                                            <label class="form-check-label" for="checkBoxModel">Box Model</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="checkCompatibility" checked>
+                                            <label class="form-check-label" for="checkCompatibility">Compatibility</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="checkPerformance" checked>
+                                            <label class="form-check-label" for="checkPerformance">Performance</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="checkMaintainability" checked>
+                                            <label class="form-check-label" for="checkMaintainability">Maintainability</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="checkAccessibility" checked>
+                                            <label class="form-check-label" for="checkAccessibility">Accessibility</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="checkOOCSS" checked>
+                                            <label class="form-check-label" for="checkOOCSS">OOCSS</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cleaning Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Cleaning Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="removeComments">
+                                            <label class="form-check-label" for="removeComments">Remove Comments</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="removeEmptyRules">
+                                            <label class="form-check-label" for="removeEmptyRules">Remove Empty Rules</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="removeWhitespace">
+                                            <label class="form-check-label" for="removeWhitespace">Remove Extra Whitespace</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="formatOutput" checked>
+                                            <label class="form-check-label" for="formatOutput">Format Output</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="sortProperties">
+                                            <label class="form-check-label" for="sortProperties">Sort Properties</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="mergeMediaQueries">
+                                            <label class="form-check-label" for="mergeMediaQueries">Merge Media Queries</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Editor and Output -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Input</h5>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary" id="clearInput">
+                                                <i class="fas fa-trash"></i> Clear
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" id="pasteInput">
+                                                <i class="fas fa-paste"></i> Paste
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <textarea id="input"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Output</h5>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary" id="clearOutput">
+                                                <i class="fas fa-trash"></i> Clear
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" id="copyOutput">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" id="downloadOutput">
+                                                <i class="fas fa-download"></i> Download
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <textarea id="output"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Validation Results -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Validation Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="validationResults" class="mb-3">
+                                    <div class="alert alert-success d-none" id="successAlert">
+                                        <i class="fas fa-check-circle"></i> CSS is valid!
+                                    </div>
+                                    <div class="alert alert-danger d-none" id="errorAlert">
+                                        <i class="fas fa-exclamation-circle"></i> <span id="errorCount">0</span> errors found
+                                    </div>
+                                    <div id="errorList" class="list-group"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Code Analysis -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Code Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Lines of Code</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="lineCount" readonly>
+                                                <span class="input-group-text">lines</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Selectors</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="selectorCount" readonly>
+                                                <span class="input-group-text">selectors</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Properties</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="propertyCount" readonly>
+                                                <span class="input-group-text">props</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">File Size</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="fileSize" readonly>
+                                                <span class="input-group-text">bytes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Examples -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common Examples</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Basic Reset</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="* { margin: 0; padding: 0; box-sizing: border-box; }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Flexbox Layout</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value=".container { display: flex; justify-content: center; align-items: center; }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Media Query</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="@media (max-width: 768px) { .container { flex-direction: column; } }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Animation</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } .fade-in { animation: fadeIn 1s; }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- CodeMirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeCSSValidator();
+        });
+
+        function initializeCSSValidator() {
+            // DOM Elements
+            const input = document.getElementById('input');
+            const output = document.getElementById('output');
+            const clearInput = document.getElementById('clearInput');
+            const pasteInput = document.getElementById('pasteInput');
+            const clearOutput = document.getElementById('clearOutput');
+            const copyOutput = document.getElementById('copyOutput');
+            const downloadOutput = document.getElementById('downloadOutput');
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorCount = document.getElementById('errorCount');
+            const errorList = document.getElementById('errorList');
+            const lineCount = document.getElementById('lineCount');
+            const selectorCount = document.getElementById('selectorCount');
+            const propertyCount = document.getElementById('propertyCount');
+            const fileSize = document.getElementById('fileSize');
+
+            // Initialize CodeMirror
+            const inputEditor = CodeMirror.fromTextArea(input, {
+                mode: 'css',
+                theme: 'monokai',
+                lineNumbers: true,
+                lineWrapping: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 4
+            });
+
+            const outputEditor = CodeMirror.fromTextArea(output, {
+                mode: 'css',
+                theme: 'eclipse',
+                lineNumbers: true,
+                lineWrapping: true,
+                readOnly: true
+            });
+
+            // Process CSS
+            function processCSS() {
+                const css = inputEditor.getValue();
+                if (!css) {
+                    outputEditor.setValue('');
+                    updateAnalysis(0, 0, 0, 0);
+                    return;
+                }
+
+                // Get validation options
+                const options = {
+                    'box-model': document.getElementById('checkBoxModel').checked,
+                    'compatible-vendor-prefixes': document.getElementById('checkCompatibility').checked,
+                    'performance': document.getElementById('checkPerformance').checked,
+                    'maintainability': document.getElementById('checkMaintainability').checked,
+                    'accessibility': document.getElementById('checkAccessibility').checked,
+                    'oocss': document.getElementById('checkOOCSS').checked
+                };
+
+                // Validate CSS
+                const messages = CSSLint.verify(css, options);
+                const hasErrors = messages.messages.length > 0;
+
+                // Update validation results
+                successAlert.classList.toggle('d-none', hasErrors);
+                errorAlert.classList.toggle('d-none', !hasErrors);
+                errorCount.textContent = messages.messages.length;
+
+                // Clear and update error list
+                errorList.innerHTML = '';
+                messages.messages.forEach(message => {
+                    const li = document.createElement('div');
+                    li.className = 'list-group-item list-group-item-danger';
+                    li.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Line ${message.line}:</strong> ${message.message}
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" onclick="navigateToLine(${message.line})">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    `;
+                    errorList.appendChild(li);
+                });
+
+                // Clean CSS
+                let cleanedCSS = css;
+
+                if (document.getElementById('removeComments').checked) {
+                    cleanedCSS = cleanedCSS.replace(/\/\*[\s\S]*?\*\//g, '');
+                }
+
+                if (document.getElementById('removeEmptyRules').checked) {
+                    cleanedCSS = cleanedCSS.replace(/[^{}]+\{\s*\}/g, '');
+                }
+
+                if (document.getElementById('removeWhitespace').checked) {
+                    cleanedCSS = cleanedCSS.replace(/\s+/g, ' ').trim();
+                }
+
+                if (document.getElementById('formatOutput').checked) {
+                    cleanedCSS = formatCSS(cleanedCSS);
+                }
+
+                if (document.getElementById('sortProperties').checked) {
+                    cleanedCSS = sortProperties(cleanedCSS);
+                }
+
+                if (document.getElementById('mergeMediaQueries').checked) {
+                    cleanedCSS = mergeMediaQueries(cleanedCSS);
+                }
+
+                // Update output
+                outputEditor.setValue(cleanedCSS);
+
+                // Update analysis
+                const lines = cleanedCSS.split('\n').length;
+                const selectors = (cleanedCSS.match(/[^{}]+\{/g) || []).length;
+                const properties = (cleanedCSS.match(/[^:]+:[^;]+;/g) || []).length;
+                const size = new Blob([cleanedCSS]).size;
+
+                updateAnalysis(lines, selectors, properties, size);
+            }
+
+            // Format CSS
+            function formatCSS(css) {
+                let formatted = '';
+                let indent = 0;
+                const lines = css.split('\n');
+
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (trimmed) {
+                        if (trimmed.endsWith('}')) {
+                            indent--;
+                        }
+                        formatted += '  '.repeat(indent) + trimmed + '\n';
+                        if (trimmed.endsWith('{')) {
+                            indent++;
+                        }
+                    }
+                });
+
+                return formatted;
+            }
+
+            // Sort properties
+            function sortProperties(css) {
+                const rules = css.split('}');
+                return rules.map(rule => {
+                    const [selector, properties] = rule.split('{');
+                    if (!properties) return rule;
+                    
+                    const sortedProperties = properties
+                        .split(';')
+                        .filter(prop => prop.trim())
+                        .map(prop => prop.trim())
+                        .sort()
+                        .join(';\n  ');
+                    
+                    return `${selector}{\n  ${sortedProperties};\n}`;
+                }).join('\n');
+            }
+
+            // Merge media queries
+            function mergeMediaQueries(css) {
+                const mediaQueries = {};
+                let otherRules = '';
+
+                css.split('}').forEach(rule => {
+                    const match = rule.match(/@media\s*\([^{]+\)/);
+                    if (match) {
+                        const query = match[0];
+                        const content = rule.slice(match[0].length).trim();
+                        if (!mediaQueries[query]) {
+                            mediaQueries[query] = [];
+                        }
+                        mediaQueries[query].push(content);
+                    } else {
+                        otherRules += rule + '}';
+                    }
+                });
+
+                let merged = otherRules;
+                Object.entries(mediaQueries).forEach(([query, contents]) => {
+                    merged += `\n${query} {\n  ${contents.join('\n  ')}\n}`;
+                });
+
+                return merged;
+            }
+
+            // Update analysis
+            function updateAnalysis(lines, selectors, properties, size) {
+                lineCount.value = lines;
+                selectorCount.value = selectors;
+                propertyCount.value = properties;
+                fileSize.value = size;
+            }
+
+            // Navigate to line
+            window.navigateToLine = function(line) {
+                inputEditor.setCursor({ line: line - 1, ch: 0 });
+                inputEditor.focus();
+            };
+
+            // Clear input
+            clearInput.addEventListener('click', function() {
+                inputEditor.setValue('');
+                processCSS();
+            });
+
+            // Paste input
+            pasteInput.addEventListener('click', async function() {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    inputEditor.setValue(text);
+                    processCSS();
+                } catch (error) {
+                    alert('Failed to paste text. Please check clipboard permissions.');
+                }
+            });
+
+            // Clear output
+            clearOutput.addEventListener('click', function() {
+                outputEditor.setValue('');
+                updateAnalysis(0, 0, 0, 0);
+            });
+
+            // Copy output
+            copyOutput.addEventListener('click', async function() {
+                try {
+                    await navigator.clipboard.writeText(outputEditor.getValue());
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Copied';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 1000);
+                } catch (error) {
+                    alert('Failed to copy CSS. Please check clipboard permissions.');
+                }
+            });
+
+            // Download output
+            downloadOutput.addEventListener('click', function() {
+                const css = outputEditor.getValue();
+                const blob = new Blob([css], { type: 'text/css' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'styles.css';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Use example
+            document.querySelectorAll('.use-example').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const currentValue = inputEditor.getValue();
+                    const newValue = currentValue ? currentValue + '\n\n' + input.value : input.value;
+                    inputEditor.setValue(newValue);
+                    processCSS();
+                });
+            });
+
+            // Event listeners for options
+            document.querySelectorAll('input[type="checkbox"], select').forEach(element => {
+                element.addEventListener('change', processCSS);
+            });
+
+            // Update on input change
+            inputEditor.on('change', processCSS);
+
+            // Initial setup
+            processCSS();
+        }
+    </script>
+    <style>
+        .CodeMirror {
+            height: 500px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .input-group input[readonly] {
+            background-color: #f8f9fa;
+        }
+        .list-group-item {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</body>
+</html> 

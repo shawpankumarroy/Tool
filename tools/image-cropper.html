@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Image Cropper</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Crop your images with precision and customizable options.
+                        </p>
+
+                        <!-- File Upload -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Upload Image</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="text-center">
+                                        <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                        <p>Drag and drop your image here or click to browse</p>
+                                        <input type="file" id="fileInput" accept="image/*" class="d-none">
+                                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                            <i class="fas fa-folder-open"></i> Choose File
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mt-3" id="uploadStatus">
+                                    No image selected
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cropping Area -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Crop Image</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" id="resetButton">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </button>
+                                    <button class="btn btn-outline-primary" id="rotateLeftButton">
+                                        <i class="fas fa-undo"></i> Rotate Left
+                                    </button>
+                                    <button class="btn btn-outline-primary" id="rotateRightButton">
+                                        <i class="fas fa-redo"></i> Rotate Right
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="cropper-container">
+                                    <img id="cropperImage" class="img-fluid" style="display: none;">
+                                    <div class="alert alert-info" id="cropperStatus">
+                                        Upload an image to start cropping
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Crop Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Crop Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="aspectRatio" class="form-label">Aspect Ratio</label>
+                                            <select class="form-select" id="aspectRatio">
+                                                <option value="free">Free</option>
+                                                <option value="square">Square (1:1)</option>
+                                                <option value="16:9">Widescreen (16:9)</option>
+                                                <option value="4:3">Standard (4:3)</option>
+                                                <option value="custom">Custom</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="viewMode" class="form-label">View Mode</label>
+                                            <select class="form-select" id="viewMode">
+                                                <option value="0">Free</option>
+                                                <option value="1">Restricted</option>
+                                                <option value="2">Fill</option>
+                                                <option value="3">Cover</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Custom Aspect Ratio -->
+                                <div class="row" id="customAspectRatio" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="aspectWidth" class="form-label">Aspect Width</label>
+                                            <input type="number" class="form-control" id="aspectWidth" min="1" value="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="aspectHeight" class="form-label">Aspect Height</label>
+                                            <input type="number" class="form-control" id="aspectHeight" min="1" value="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quality" class="form-label">Quality</label>
+                                            <input type="range" class="form-range" id="quality" min="1" max="100" value="90">
+                                            <div class="d-flex justify-content-between">
+                                                <span>1%</span>
+                                                <span id="qualityValue">90%</span>
+                                                <span>100%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="format" class="form-label">Output Format</label>
+                                            <select class="form-select" id="format">
+                                                <option value="original">Original</option>
+                                                <option value="jpeg">JPEG</option>
+                                                <option value="png">PNG</option>
+                                                <option value="webp">WebP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Preview</h5>
+                                <button class="btn btn-outline-primary" id="downloadButton" disabled>
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="preview-container">
+                                    <img id="previewImage" class="img-fluid" style="display: none;">
+                                    <div class="alert alert-info" id="previewStatus">
+                                        Crop image to see preview
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeImageCropper();
+        });
+
+        function initializeImageCropper() {
+            // DOM Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const cropperImage = document.getElementById('cropperImage');
+            const cropperStatus = document.getElementById('cropperStatus');
+            const resetButton = document.getElementById('resetButton');
+            const rotateLeftButton = document.getElementById('rotateLeftButton');
+            const rotateRightButton = document.getElementById('rotateRightButton');
+            const aspectRatio = document.getElementById('aspectRatio');
+            const viewMode = document.getElementById('viewMode');
+            const customAspectRatio = document.getElementById('customAspectRatio');
+            const aspectWidth = document.getElementById('aspectWidth');
+            const aspectHeight = document.getElementById('aspectHeight');
+            const quality = document.getElementById('quality');
+            const qualityValue = document.getElementById('qualityValue');
+            const format = document.getElementById('format');
+            const previewImage = document.getElementById('previewImage');
+            const previewStatus = document.getElementById('previewStatus');
+            const downloadButton = document.getElementById('downloadButton');
+
+            // Current state
+            let cropper = null;
+            let originalImage = null;
+
+            // Event Listeners
+            fileInput.addEventListener('change', handleFileSelect);
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('drop', handleDrop);
+            resetButton.addEventListener('click', resetCropper);
+            rotateLeftButton.addEventListener('click', rotateLeft);
+            rotateRightButton.addEventListener('click', rotateRight);
+            aspectRatio.addEventListener('change', updateAspectRatio);
+            viewMode.addEventListener('change', updateViewMode);
+            aspectWidth.addEventListener('input', updateCustomAspectRatio);
+            aspectHeight.addEventListener('input', updateCustomAspectRatio);
+            quality.addEventListener('input', updateQuality);
+            format.addEventListener('change', updateFormat);
+            downloadButton.addEventListener('click', downloadImage);
+
+            // Functions
+            function handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    loadImage(file);
+                }
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.add('dragover');
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    loadImage(file);
+                }
+            }
+
+            function loadImage(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    originalImage = new Image();
+                    originalImage.onload = function() {
+                        cropperImage.src = e.target.result;
+                        cropperImage.style.display = 'block';
+                        cropperStatus.style.display = 'none';
+                        
+                        uploadStatus.className = 'alert alert-success mt-3';
+                        uploadStatus.textContent = `Image loaded: ${file.name} (${this.width}x${this.height})`;
+                        
+                        initializeCropper();
+                    };
+                    originalImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function initializeCropper() {
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: getAspectRatio(),
+                    viewMode: parseInt(viewMode.value),
+                    autoCropArea: 1,
+                    responsive: true,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: true,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    crop: function(event) {
+                        updatePreview();
+                    }
+                });
+            }
+
+            function resetCropper() {
+                if (cropper) {
+                    cropper.reset();
+                    updatePreview();
+                }
+            }
+
+            function rotateLeft() {
+                if (cropper) {
+                    cropper.rotate(-90);
+                    updatePreview();
+                }
+            }
+
+            function rotateRight() {
+                if (cropper) {
+                    cropper.rotate(90);
+                    updatePreview();
+                }
+            }
+
+            function updateAspectRatio() {
+                customAspectRatio.style.display = aspectRatio.value === 'custom' ? 'block' : 'none';
+                if (cropper) {
+                    cropper.setAspectRatio(getAspectRatio());
+                }
+            }
+
+            function updateViewMode() {
+                if (cropper) {
+                    cropper.setViewMode(parseInt(viewMode.value));
+                }
+            }
+
+            function updateCustomAspectRatio() {
+                if (cropper) {
+                    cropper.setAspectRatio(getAspectRatio());
+                }
+            }
+
+            function updateQuality() {
+                qualityValue.textContent = `${quality.value}%`;
+                updatePreview();
+            }
+
+            function updateFormat() {
+                updatePreview();
+            }
+
+            function getAspectRatio() {
+                switch (aspectRatio.value) {
+                    case 'square':
+                        return 1;
+                    case '16:9':
+                        return 16 / 9;
+                    case '4:3':
+                        return 4 / 3;
+                    case 'custom':
+                        return aspectWidth.value / aspectHeight.value;
+                    default:
+                        return NaN;
+                }
+            }
+
+            function updatePreview() {
+                if (!cropper) return;
+
+                const canvas = cropper.getCroppedCanvas();
+                if (!canvas) return;
+
+                // Convert to selected format
+                let mimeType = 'image/jpeg';
+                switch (format.value) {
+                    case 'png':
+                        mimeType = 'image/png';
+                        break;
+                    case 'webp':
+                        mimeType = 'image/webp';
+                        break;
+                    case 'original':
+                        mimeType = originalImage.src.split(';')[0].split(':')[1];
+                        break;
+                }
+
+                // Update preview
+                previewImage.src = canvas.toDataURL(mimeType, quality.value / 100);
+                previewImage.style.display = 'block';
+                previewStatus.style.display = 'none';
+
+                // Update status
+                previewStatus.className = 'alert alert-success';
+                previewStatus.textContent = `Cropped to ${Math.round(canvas.width)}x${Math.round(canvas.height)}`;
+                previewStatus.style.display = 'block';
+
+                // Enable download button
+                downloadButton.disabled = false;
+            }
+
+            function downloadImage() {
+                if (!cropper) return;
+
+                const canvas = cropper.getCroppedCanvas();
+                if (!canvas) return;
+
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL(getMimeType(), quality.value / 100);
+                a.download = `cropped_image.${format.value}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            function getMimeType() {
+                switch (format.value) {
+                    case 'png':
+                        return 'image/png';
+                    case 'webp':
+                        return 'image/webp';
+                    case 'original':
+                        return originalImage.src.split(';')[0].split(':')[1];
+                    default:
+                        return 'image/jpeg';
+                }
+            }
+        }
+    </script>
+    <style>
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 0.25rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        .cropper-container {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+        }
+        .cropper-container img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+        .preview-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+        }
+        .preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+    </style>
+</body>
+</html> 

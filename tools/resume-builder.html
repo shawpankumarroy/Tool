@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Resume Builder</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Create a professional resume with customizable templates and export options.
+                        </p>
+
+                        <!-- Template Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Choose Template</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="templateContainer">
+                                    <!-- Templates will be added here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resume Form -->
+                        <div class="card mb-4" id="resumeForm" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Resume Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Personal Information -->
+                                <div class="mb-4">
+                                    <h6>Personal Information</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <input type="text" class="form-control" id="fullName" placeholder="Full Name">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <input type="text" class="form-control" id="jobTitle" placeholder="Job Title">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <input type="email" class="form-control" id="email" placeholder="Email">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <input type="tel" class="form-control" id="phone" placeholder="Phone">
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <input type="text" class="form-control" id="location" placeholder="Location">
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <textarea class="form-control" id="summary" rows="3" placeholder="Professional Summary"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Work Experience -->
+                                <div class="mb-4">
+                                    <h6>Work Experience</h6>
+                                    <div id="experienceContainer">
+                                        <div class="experience-item mb-3">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="Job Title">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="Company">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="Start Date">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="End Date">
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <textarea class="form-control" rows="3" placeholder="Description"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary" id="addExperience">
+                                        <i class="fas fa-plus"></i> Add Experience
+                                    </button>
+                                </div>
+
+                                <!-- Education -->
+                                <div class="mb-4">
+                                    <h6>Education</h6>
+                                    <div id="educationContainer">
+                                        <div class="education-item mb-3">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="Degree">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="Institution">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="Start Date">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control" placeholder="End Date">
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <textarea class="form-control" rows="2" placeholder="Description"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary" id="addEducation">
+                                        <i class="fas fa-plus"></i> Add Education
+                                    </button>
+                                </div>
+
+                                <!-- Skills -->
+                                <div class="mb-4">
+                                    <h6>Skills</h6>
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <input type="text" class="form-control" id="skills" placeholder="Enter skills separated by commas">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customization -->
+                                <div class="mb-4">
+                                    <h6>Customization</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Font Family</label>
+                                            <select class="form-select" id="fontFamily">
+                                                <option value="Roboto">Roboto</option>
+                                                <option value="Arial">Arial</option>
+                                                <option value="Times New Roman">Times New Roman</option>
+                                                <option value="Helvetica">Helvetica</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Color Scheme</label>
+                                            <select class="form-select" id="colorScheme">
+                                                <option value="blue">Blue</option>
+                                                <option value="green">Green</option>
+                                                <option value="red">Red</option>
+                                                <option value="purple">Purple</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview and Export -->
+                        <div class="card mb-4" id="previewCard" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Preview & Export</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div id="resumePreview" class="resume-preview">
+                                            <!-- Resume preview will be rendered here -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" id="exportPDF">
+                                                <i class="fas fa-file-pdf"></i> Export as PDF
+                                            </button>
+                                            <button class="btn btn-outline-primary" id="exportDOCX">
+                                                <i class="fas fa-file-word"></i> Export as DOCX
+                                            </button>
+                                            <button class="btn btn-outline-secondary" id="saveTemplate">
+                                                <i class="fas fa-save"></i> Save Template
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeResumeBuilder();
+        });
+
+        function initializeResumeBuilder() {
+            const templateContainer = document.getElementById('templateContainer');
+            const resumeForm = document.getElementById('resumeForm');
+            const previewCard = document.getElementById('previewCard');
+            const addExperience = document.getElementById('addExperience');
+            const addEducation = document.getElementById('addEducation');
+            const experienceContainer = document.getElementById('experienceContainer');
+            const educationContainer = document.getElementById('educationContainer');
+
+            // Templates
+            const templates = [
+                {
+                    id: 'template1',
+                    name: 'Professional',
+                    preview: 'template1-preview.jpg'
+                },
+                {
+                    id: 'template2',
+                    name: 'Modern',
+                    preview: 'template2-preview.jpg'
+                },
+                {
+                    id: 'template3',
+                    name: 'Creative',
+                    preview: 'template3-preview.jpg'
+                }
+            ];
+
+            // Render templates
+            templates.forEach(template => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+                
+                const card = document.createElement('div');
+                card.className = 'card h-100';
+                
+                const img = document.createElement('img');
+                img.className = 'card-img-top';
+                img.src = `../assets/images/templates/${template.preview}`;
+                img.alt = template.name;
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                const title = document.createElement('h5');
+                title.className = 'card-title';
+                title.textContent = template.name;
+                
+                const selectBtn = document.createElement('button');
+                selectBtn.className = 'btn btn-primary w-100';
+                selectBtn.textContent = 'Select Template';
+                selectBtn.onclick = () => selectTemplate(template.id);
+                
+                cardBody.appendChild(title);
+                cardBody.appendChild(selectBtn);
+                
+                card.appendChild(img);
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                templateContainer.appendChild(col);
+            });
+
+            function selectTemplate(templateId) {
+                resumeForm.style.display = 'block';
+                previewCard.style.display = 'block';
+                // Scroll to form
+                resumeForm.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Add experience
+            addExperience.addEventListener('click', () => {
+                const experienceItem = document.createElement('div');
+                experienceItem.className = 'experience-item mb-3';
+                experienceItem.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="Job Title">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="Company">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="Start Date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="End Date">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <textarea class="form-control" rows="3" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                `;
+                experienceContainer.appendChild(experienceItem);
+            });
+
+            // Add education
+            addEducation.addEventListener('click', () => {
+                const educationItem = document.createElement('div');
+                educationItem.className = 'education-item mb-3';
+                educationItem.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="Degree">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="Institution">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="Start Date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" class="form-control" placeholder="End Date">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <textarea class="form-control" rows="2" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                `;
+                educationContainer.appendChild(educationItem);
+            });
+
+            // Export functionality
+            document.getElementById('exportPDF').addEventListener('click', () => {
+                // In a real implementation, this would use a PDF generation library
+                alert('PDF export functionality would be implemented here');
+            });
+
+            document.getElementById('exportDOCX').addEventListener('click', () => {
+                // In a real implementation, this would use a DOCX generation library
+                alert('DOCX export functionality would be implemented here');
+            });
+
+            document.getElementById('saveTemplate').addEventListener('click', () => {
+                // In a real implementation, this would save the template to local storage or a server
+                alert('Template saved successfully');
+            });
+        }
+    </script>
+    <style>
+        .resume-preview {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+        .template-preview {
+            height: 200px;
+            object-fit: cover;
+        }
+        .experience-item, .education-item {
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+</body>
+</html> 

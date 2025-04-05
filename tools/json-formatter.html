@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/brace-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/indent-fold.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">JSON Formatter & Validator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Format, validate, and analyze JSON data with a user-friendly interface.
+                        </p>
+
+                        <!-- Input Area -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">JSON Input</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary" id="formatBtn">
+                                        <i class="fas fa-code"></i> Format
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" id="minifyBtn">
+                                        <i class="fas fa-compress"></i> Minify
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="clearBtn">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="jsonEditor"></div>
+                            </div>
+                        </div>
+
+                        <!-- Validation Results -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Validation Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert" id="validationAlert" role="alert">
+                                    <!-- Validation message will be shown here -->
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">JSON Size</label>
+                                            <input type="text" class="form-control" id="jsonSize" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Validation Status</label>
+                                            <input type="text" class="form-control" id="validationStatus" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- JSON Analysis -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">JSON Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Object Count</label>
+                                            <input type="text" class="form-control" id="objectCount" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Array Count</label>
+                                            <input type="text" class="form-control" id="arrayCount" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">String Count</label>
+                                            <input type="text" class="form-control" id="stringCount" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Number Count</label>
+                                            <input type="text" class="form-control" id="numberCount" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Boolean Count</label>
+                                            <input type="text" class="form-control" id="booleanCount" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Null Count</label>
+                                            <input type="text" class="form-control" id="nullCount" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample JSON -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Sample JSON</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="btn-group mb-3">
+                                    <button class="btn btn-outline-primary" data-sample="simple">Simple</button>
+                                    <button class="btn btn-outline-primary" data-sample="nested">Nested</button>
+                                    <button class="btn btn-outline-primary" data-sample="array">Array</button>
+                                    <button class="btn btn-outline-primary" data-sample="complex">Complex</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                                <th>Load</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Simple</td>
+                                                <td>Basic JSON object with key-value pairs</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" data-sample="simple">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nested</td>
+                                                <td>JSON with nested objects and arrays</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" data-sample="nested">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Array</td>
+                                                <td>JSON array with multiple elements</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" data-sample="array">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Complex</td>
+                                                <td>Complex JSON with mixed data types</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" data-sample="complex">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeJSONFormatter();
+        });
+
+        function initializeJSONFormatter() {
+            // DOM Elements
+            const formatBtn = document.getElementById('formatBtn');
+            const minifyBtn = document.getElementById('minifyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const validationAlert = document.getElementById('validationAlert');
+            const jsonSize = document.getElementById('jsonSize');
+            const validationStatus = document.getElementById('validationStatus');
+            const objectCount = document.getElementById('objectCount');
+            const arrayCount = document.getElementById('arrayCount');
+            const stringCount = document.getElementById('stringCount');
+            const numberCount = document.getElementById('numberCount');
+            const booleanCount = document.getElementById('booleanCount');
+            const nullCount = document.getElementById('nullCount');
+
+            // Initialize CodeMirror
+            const editor = CodeMirror(document.getElementById('jsonEditor'), {
+                mode: 'javascript',
+                theme: 'monokai',
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                foldGutter: true,
+                gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+                extraKeys: {
+                    'Ctrl-Space': 'autocomplete'
+                }
+            });
+
+            // Sample JSON data
+            const samples = {
+                simple: {
+                    "name": "John Doe",
+                    "age": 30,
+                    "email": "john@example.com",
+                    "active": true
+                },
+                nested: {
+                    "user": {
+                        "name": "John Doe",
+                        "address": {
+                            "street": "123 Main St",
+                            "city": "New York",
+                            "zip": "10001"
+                        },
+                        "hobbies": ["reading", "gaming", "coding"]
+                    }
+                },
+                array: [
+                    {
+                        "id": 1,
+                        "name": "Item 1",
+                        "price": 10.99
+                    },
+                    {
+                        "id": 2,
+                        "name": "Item 2",
+                        "price": 20.99
+                    },
+                    {
+                        "id": 3,
+                        "name": "Item 3",
+                        "price": 30.99
+                    }
+                ],
+                complex: {
+                    "users": [
+                        {
+                            "id": 1,
+                            "name": "John Doe",
+                            "age": 30,
+                            "email": "john@example.com",
+                            "active": true,
+                            "roles": ["admin", "user"],
+                            "preferences": {
+                                "theme": "dark",
+                                "notifications": true
+                            }
+                        },
+                        {
+                            "id": 2,
+                            "name": "Jane Smith",
+                            "age": 25,
+                            "email": "jane@example.com",
+                            "active": false,
+                            "roles": ["user"],
+                            "preferences": {
+                                "theme": "light",
+                                "notifications": false
+                            }
+                        }
+                    ],
+                    "settings": {
+                        "version": "1.0.0",
+                        "debug": false,
+                        "features": {
+                            "autosave": true,
+                            "backup": false
+                        }
+                    }
+                }
+            };
+
+            // Format JSON
+            function formatJSON() {
+                try {
+                    const json = JSON.parse(editor.getValue());
+                    editor.setValue(JSON.stringify(json, null, 2));
+                    validateJSON();
+                } catch (error) {
+                    showError('Invalid JSON: ' + error.message);
+                }
+            }
+
+            // Minify JSON
+            function minifyJSON() {
+                try {
+                    const json = JSON.parse(editor.getValue());
+                    editor.setValue(JSON.stringify(json));
+                    validateJSON();
+                } catch (error) {
+                    showError('Invalid JSON: ' + error.message);
+                }
+            }
+
+            // Validate JSON
+            function validateJSON() {
+                try {
+                    const json = JSON.parse(editor.getValue());
+                    const size = new Blob([editor.getValue()]).size;
+                    jsonSize.value = formatSize(size);
+                    validationStatus.value = 'Valid';
+                    validationAlert.className = 'alert alert-success';
+                    validationAlert.textContent = 'Valid JSON';
+                    analyzeJSON(json);
+                } catch (error) {
+                    validationStatus.value = 'Invalid';
+                    validationAlert.className = 'alert alert-danger';
+                    validationAlert.textContent = 'Invalid JSON: ' + error.message;
+                    clearAnalysis();
+                }
+            }
+
+            // Analyze JSON
+            function analyzeJSON(json) {
+                const counts = {
+                    objects: 0,
+                    arrays: 0,
+                    strings: 0,
+                    numbers: 0,
+                    booleans: 0,
+                    nulls: 0
+                };
+
+                function traverse(obj) {
+                    if (obj === null) {
+                        counts.nulls++;
+                        return;
+                    }
+
+                    const type = typeof obj;
+                    if (type === 'string') counts.strings++;
+                    else if (type === 'number') counts.numbers++;
+                    else if (type === 'boolean') counts.booleans++;
+                    else if (Array.isArray(obj)) {
+                        counts.arrays++;
+                        obj.forEach(item => traverse(item));
+                    } else if (type === 'object') {
+                        counts.objects++;
+                        Object.values(obj).forEach(value => traverse(value));
+                    }
+                }
+
+                traverse(json);
+
+                objectCount.value = counts.objects;
+                arrayCount.value = counts.arrays;
+                stringCount.value = counts.strings;
+                numberCount.value = counts.numbers;
+                booleanCount.value = counts.booleans;
+                nullCount.value = counts.nulls;
+            }
+
+            // Clear analysis
+            function clearAnalysis() {
+                objectCount.value = '';
+                arrayCount.value = '';
+                stringCount.value = '';
+                numberCount.value = '';
+                booleanCount.value = '';
+                nullCount.value = '';
+                jsonSize.value = '';
+            }
+
+            // Format size
+            function formatSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+                return (bytes / 1048576).toFixed(2) + ' MB';
+            }
+
+            // Show error
+            function showError(message) {
+                validationAlert.className = 'alert alert-danger';
+                validationAlert.textContent = message;
+            }
+
+            // Event listeners
+            formatBtn.addEventListener('click', formatJSON);
+            minifyBtn.addEventListener('click', minifyJSON);
+            clearBtn.addEventListener('click', function() {
+                editor.setValue('');
+                clearAnalysis();
+                validationAlert.className = 'alert';
+                validationAlert.textContent = '';
+                validationStatus.value = '';
+            });
+
+            // Load sample JSON
+            document.querySelectorAll('[data-sample]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const sample = this.getAttribute('data-sample');
+                    editor.setValue(JSON.stringify(samples[sample], null, 2));
+                    validateJSON();
+                });
+            });
+
+            // Validate on change
+            editor.on('change', validateJSON);
+
+            // Initial validation
+            validateJSON();
+        }
+    </script>
+    <style>
+        .CodeMirror {
+            height: 300px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+        .btn-group .btn {
+            margin-right: 0.25rem;
+        }
+    </style>
+</body>
+</html> 

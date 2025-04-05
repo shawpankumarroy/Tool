@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Age Calculator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Calculate age, time differences, and important dates with this versatile calculator.
+                        </p>
+
+                        <!-- Calculation Mode -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Calculation Mode</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modeAge" value="age" checked>
+                                            <label class="btn btn-outline-primary" for="modeAge">Age Calculator</label>
+                                            
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modeDifference" value="difference">
+                                            <label class="btn btn-outline-primary" for="modeDifference">Date Difference</label>
+                                            
+                                            <input type="radio" class="btn-check" name="calculationMode" id="modeAdd" value="add">
+                                            <label class="btn btn-outline-primary" for="modeAdd">Add/Subtract Time</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Fields -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Input Values</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" id="date1Label">Birth Date</label>
+                                            <input type="text" class="form-control datepicker" id="date1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" id="date2Label">Current Date</label>
+                                            <input type="text" class="form-control datepicker" id="date2">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="timeInputs" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Years</label>
+                                            <input type="number" class="form-control" id="years" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Months</label>
+                                            <input type="number" class="form-control" id="months" min="0" max="11">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Days</label>
+                                            <input type="number" class="form-control" id="days" min="0" max="30">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Operation</label>
+                                            <select class="form-select" id="operation">
+                                                <option value="add">Add</option>
+                                                <option value="subtract">Subtract</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" id="calculateButton">
+                                        <i class="fas fa-calculator"></i> Calculate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="card mb-4" id="resultsSection" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Age</label>
+                                            <input type="text" class="form-control" id="age" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Total Days</label>
+                                            <input type="text" class="form-control" id="totalDays" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Next Birthday</label>
+                                            <input type="text" class="form-control" id="nextBirthday" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Days Until Next Birthday</label>
+                                            <input type="text" class="form-control" id="daysUntilBirthday" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Milestone</th>
+                                                        <th>Date</th>
+                                                        <th>Age</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="milestones">
+                                                    <!-- Milestones will be populated here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Examples -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common Examples</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Newborn</h6>
+                                                <p class="card-text">Born today</p>
+                                                <button class="btn btn-outline-primary btn-sm load-example" data-mode="age" data-date1="today" data-date2="today">
+                                                    Load Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Teenager</h6>
+                                                <p class="card-text">Born 15 years ago</p>
+                                                <button class="btn btn-outline-primary btn-sm load-example" data-mode="age" data-date1="15years" data-date2="today">
+                                                    Load Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Retirement</h6>
+                                                <p class="card-text">Born 65 years ago</p>
+                                                <button class="btn btn-outline-primary btn-sm load-example" data-mode="age" data-date1="65years" data-date2="today">
+                                                    Load Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeAgeCalculator();
+        });
+
+        function initializeAgeCalculator() {
+            // DOM Elements
+            const calculationMode = document.querySelectorAll('input[name="calculationMode"]');
+            const date1Label = document.getElementById('date1Label');
+            const date2Label = document.getElementById('date2Label');
+            const date1 = document.getElementById('date1');
+            const date2 = document.getElementById('date2');
+            const timeInputs = document.getElementById('timeInputs');
+            const calculateButton = document.getElementById('calculateButton');
+            const resultsSection = document.getElementById('resultsSection');
+            const age = document.getElementById('age');
+            const totalDays = document.getElementById('totalDays');
+            const nextBirthday = document.getElementById('nextBirthday');
+            const daysUntilBirthday = document.getElementById('daysUntilBirthday');
+            const milestones = document.getElementById('milestones');
+            const loadExampleButtons = document.querySelectorAll('.load-example');
+
+            // Initialize date pickers
+            flatpickr(".datepicker", {
+                dateFormat: "Y-m-d",
+                maxDate: "today"
+            });
+
+            // Update labels based on calculation mode
+            function updateLabels(mode) {
+                switch (mode) {
+                    case 'age':
+                        date1Label.textContent = 'Birth Date';
+                        date2Label.textContent = 'Current Date';
+                        timeInputs.style.display = 'none';
+                        break;
+                    case 'difference':
+                        date1Label.textContent = 'Start Date';
+                        date2Label.textContent = 'End Date';
+                        timeInputs.style.display = 'none';
+                        break;
+                    case 'add':
+                        date1Label.textContent = 'Base Date';
+                        date2Label.textContent = 'Result Date';
+                        timeInputs.style.display = 'block';
+                        break;
+                }
+            }
+
+            // Calculate age
+            function calculateAge(birthDate, currentDate) {
+                const diff = currentDate - birthDate;
+                const ageDate = new Date(diff);
+                
+                return {
+                    years: Math.abs(ageDate.getUTCFullYear() - 1970),
+                    months: ageDate.getUTCMonth(),
+                    days: ageDate.getUTCDate() - 1,
+                    totalDays: Math.floor(diff / (1000 * 60 * 60 * 24))
+                };
+            }
+
+            // Calculate next birthday
+            function calculateNextBirthday(birthDate, currentDate) {
+                const nextBirthday = new Date(birthDate);
+                nextBirthday.setFullYear(currentDate.getFullYear());
+                
+                if (nextBirthday < currentDate) {
+                    nextBirthday.setFullYear(currentDate.getFullYear() + 1);
+                }
+                
+                return {
+                    date: nextBirthday,
+                    daysUntil: Math.ceil((nextBirthday - currentDate) / (1000 * 60 * 60 * 24))
+                };
+            }
+
+            // Calculate milestones
+            function calculateMilestones(birthDate) {
+                const milestones = [
+                    { name: 'First Birthday', years: 1 },
+                    { name: 'Kindergarten', years: 5 },
+                    { name: 'Elementary School', years: 6 },
+                    { name: 'Middle School', years: 11 },
+                    { name: 'High School', years: 14 },
+                    { name: 'College', years: 18 },
+                    { name: 'Legal Drinking Age', years: 21 },
+                    { name: 'Car Rental Age', years: 25 },
+                    { name: 'Mid-Life', years: 40 },
+                    { name: 'Retirement Age', years: 65 },
+                    { name: 'Century', years: 100 }
+                ];
+
+                return milestones.map(milestone => {
+                    const date = new Date(birthDate);
+                    date.setFullYear(date.getFullYear() + milestone.years);
+                    return {
+                        name: milestone.name,
+                        date: date,
+                        age: milestone.years
+                    };
+                });
+            }
+
+            // Display results
+            function displayResults(birthDate, currentDate) {
+                const ageResult = calculateAge(birthDate, currentDate);
+                const nextBirthdayResult = calculateNextBirthday(birthDate, currentDate);
+                const milestoneResults = calculateMilestones(birthDate);
+
+                // Update age display
+                age.value = `${ageResult.years} years, ${ageResult.months} months, ${ageResult.days} days`;
+                totalDays.value = `${ageResult.totalDays} days`;
+                nextBirthday.value = nextBirthdayResult.date.toLocaleDateString();
+                daysUntilBirthday.value = `${nextBirthdayResult.daysUntil} days`;
+
+                // Update milestones
+                milestones.innerHTML = '';
+                milestoneResults.forEach(milestone => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${milestone.name}</td>
+                        <td>${milestone.date.toLocaleDateString()}</td>
+                        <td>${milestone.age} years</td>
+                    `;
+                    milestones.appendChild(row);
+                });
+
+                resultsSection.style.display = 'block';
+            }
+
+            // Calculate button click handler
+            calculateButton.addEventListener('click', () => {
+                const mode = document.querySelector('input[name="calculationMode"]:checked').value;
+                const date1Value = new Date(date1.value);
+                const date2Value = new Date(date2.value);
+
+                if (mode === 'add') {
+                    const years = parseInt(document.getElementById('years').value) || 0;
+                    const months = parseInt(document.getElementById('months').value) || 0;
+                    const days = parseInt(document.getElementById('days').value) || 0;
+                    const operation = document.getElementById('operation').value;
+
+                    const resultDate = new Date(date1Value);
+                    if (operation === 'add') {
+                        resultDate.setFullYear(resultDate.getFullYear() + years);
+                        resultDate.setMonth(resultDate.getMonth() + months);
+                        resultDate.setDate(resultDate.getDate() + days);
+                    } else {
+                        resultDate.setFullYear(resultDate.getFullYear() - years);
+                        resultDate.setMonth(resultDate.getMonth() - months);
+                        resultDate.setDate(resultDate.getDate() - days);
+                    }
+
+                    date2.value = resultDate.toISOString().split('T')[0];
+                }
+
+                displayResults(date1Value, date2Value);
+            });
+
+            // Mode change handler
+            calculationMode.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateLabels(radio.value);
+                    date1.value = '';
+                    date2.value = '';
+                    resultsSection.style.display = 'none';
+                });
+            });
+
+            // Load example button click handlers
+            loadExampleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const mode = button.dataset.mode;
+                    document.getElementById(`mode${mode.charAt(0).toUpperCase() + mode.slice(1)}`).checked = true;
+                    updateLabels(mode);
+
+                    const today = new Date();
+                    const date1Value = button.dataset.date1;
+                    const date2Value = button.dataset.date2;
+
+                    if (date1Value === 'today') {
+                        date1.value = today.toISOString().split('T')[0];
+                    } else if (date1Value.endsWith('years')) {
+                        const years = parseInt(date1Value);
+                        const birthDate = new Date(today);
+                        birthDate.setFullYear(birthDate.getFullYear() - years);
+                        date1.value = birthDate.toISOString().split('T')[0];
+                    }
+
+                    if (date2Value === 'today') {
+                        date2.value = today.toISOString().split('T')[0];
+                    }
+
+                    calculateButton.click();
+                });
+            });
+
+            // Handle Enter key in inputs
+            [date1, date2].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateButton.click();
+                    }
+                });
+            });
+
+            // Initial setup
+            updateLabels('age');
+            date2.value = new Date().toISOString().split('T')[0];
+        }
+    </script>
+    <style>
+        .form-control:read-only {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+</html> 

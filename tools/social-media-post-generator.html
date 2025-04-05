@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Post Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- html2canvas -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Social Media Post Generator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Create and customize social media posts for different platforms with ease.
+                        </p>
+
+                        <!-- Platform Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Select Platform</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="platformContainer">
+                                    <!-- Platforms will be added here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post Templates -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Post Templates</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="templateContainer">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Announcement</h6>
+                                                <p class="card-text small text-muted">Perfect for product launches and important updates</p>
+                                                <button class="btn btn-outline-primary w-100" onclick="applyTemplate('announcement')">Use Template</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Question</h6>
+                                                <p class="card-text small text-muted">Engage your audience with interactive content</p>
+                                                <button class="btn btn-outline-primary w-100" onclick="applyTemplate('question')">Use Template</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Promotion</h6>
+                                                <p class="card-text small text-muted">Highlight special offers and discounts</p>
+                                                <button class="btn btn-outline-primary w-100" onclick="applyTemplate('promotion')">Use Template</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post Editor -->
+                        <div class="card mb-4" id="editorCard" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Post Editor</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Preview -->
+                                    <div class="col-md-8 mb-4">
+                                        <div class="post-preview-container">
+                                            <div id="postPreview" class="post-preview">
+                                                <div class="post-header">
+                                                    <img id="profileImage" src="../assets/images/default-profile.png" alt="Profile" class="profile-image">
+                                                    <div class="post-info">
+                                                        <div class="profile-name">Your Name</div>
+                                                        <div class="post-time">Just now</div>
+                                                    </div>
+                                                </div>
+                                                <div id="postContent" class="post-content">
+                                                    <p id="postText">Your post content goes here...</p>
+                                                    <div id="postImage" class="post-image-container">
+                                                        <img src="" alt="Post image" class="post-image">
+                                                    </div>
+                                                </div>
+                                                <div class="post-actions">
+                                                    <button class="action-btn"><i class="far fa-heart"></i></button>
+                                                    <button class="action-btn"><i class="far fa-comment"></i></button>
+                                                    <button class="action-btn"><i class="far fa-share-square"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Controls -->
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Profile Name</label>
+                                            <input type="text" class="form-control" id="profileName" placeholder="Enter profile name">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Post Content</label>
+                                            <textarea class="form-control" id="postTextInput" rows="4" placeholder="Write your post content..."></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Upload Image</label>
+                                            <input type="file" class="form-control" id="postImageInput" accept="image/*">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Background Color</label>
+                                            <input type="color" class="form-control form-control-color" id="backgroundColor" value="#ffffff">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Text Color</label>
+                                            <input type="color" class="form-control form-control-color" id="textColor" value="#000000">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Font Size</label>
+                                            <input type="range" class="form-range" id="fontSize" min="12" max="24" value="16">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Font Family</label>
+                                            <select class="form-select" id="fontFamily">
+                                                <option value="Roboto">Roboto</option>
+                                                <option value="Arial">Arial</option>
+                                                <option value="Helvetica">Helvetica</option>
+                                                <option value="Times New Roman">Times New Roman</option>
+                                                <option value="Georgia">Georgia</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Hashtags</label>
+                                            <input type="text" class="form-control" id="hashtags" placeholder="Add hashtags (comma separated)">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Post Schedule</label>
+                                            <input type="datetime-local" class="form-control" id="postSchedule">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">AI Suggestions</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="aiPrompt" placeholder="Describe your post...">
+                                                <button class="btn btn-outline-secondary" type="button" id="generateSuggestions">
+                                                    <i class="fas fa-magic"></i> Generate
+                                                </button>
+                                            </div>
+                                            <div id="suggestionsContainer" class="mt-2"></div>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" id="downloadPost">
+                                                <i class="fas fa-download"></i> Download Post
+                                            </button>
+                                            <button class="btn btn-outline-primary" id="copyPost">
+                                                <i class="fas fa-copy"></i> Copy to Clipboard
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializePostGenerator();
+        });
+
+        function initializePostGenerator() {
+            const platformContainer = document.getElementById('platformContainer');
+            const editorCard = document.getElementById('editorCard');
+            const postPreview = document.getElementById('postPreview');
+            const profileName = document.getElementById('profileName');
+            const postText = document.getElementById('postText');
+            const postTextInput = document.getElementById('postTextInput');
+            const postImage = document.getElementById('postImage');
+            const postImageInput = document.getElementById('postImageInput');
+            const backgroundColor = document.getElementById('backgroundColor');
+            const textColor = document.getElementById('textColor');
+            const fontSize = document.getElementById('fontSize');
+            const hashtags = document.getElementById('hashtags');
+
+            // Platforms with additional properties
+            const platforms = [
+                {
+                    id: 'facebook',
+                    name: 'Facebook',
+                    icon: 'fab fa-facebook',
+                    color: '#1877f2',
+                    aspectRatio: '1.91:1',
+                    maxChars: 63206
+                },
+                {
+                    id: 'instagram',
+                    name: 'Instagram',
+                    icon: 'fab fa-instagram',
+                    color: '#e4405f',
+                    aspectRatio: '1:1',
+                    maxChars: 2200
+                },
+                {
+                    id: 'twitter',
+                    name: 'Twitter',
+                    icon: 'fab fa-twitter',
+                    color: '#1da1f2',
+                    aspectRatio: '16:9',
+                    maxChars: 280
+                },
+                {
+                    id: 'linkedin',
+                    name: 'LinkedIn',
+                    icon: 'fab fa-linkedin',
+                    color: '#0a66c2',
+                    aspectRatio: '1.91:1',
+                    maxChars: 3000
+                },
+                {
+                    id: 'pinterest',
+                    name: 'Pinterest',
+                    icon: 'fab fa-pinterest',
+                    color: '#e60023',
+                    aspectRatio: '2:3',
+                    maxChars: 500
+                },
+                {
+                    id: 'tiktok',
+                    name: 'TikTok',
+                    icon: 'fab fa-tiktok',
+                    color: '#000000',
+                    aspectRatio: '9:16',
+                    maxChars: 2200
+                }
+            ];
+
+            let currentPlatform = null;
+
+            // Render platforms
+            platforms.forEach(platform => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+                
+                const card = document.createElement('div');
+                card.className = 'card h-100 platform-card';
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body text-center';
+                
+                const icon = document.createElement('i');
+                icon.className = platform.icon;
+                icon.style.fontSize = '3rem';
+                icon.style.color = platform.color;
+                
+                const title = document.createElement('h5');
+                title.className = 'card-title mt-3';
+                title.textContent = platform.name;
+                
+                const details = document.createElement('p');
+                details.className = 'text-muted small';
+                details.textContent = `Max characters: ${platform.maxChars}`;
+                
+                const selectBtn = document.createElement('button');
+                selectBtn.className = 'btn btn-primary w-100 mt-3';
+                selectBtn.textContent = 'Select Platform';
+                selectBtn.onclick = () => selectPlatform(platform);
+                
+                cardBody.appendChild(icon);
+                cardBody.appendChild(title);
+                cardBody.appendChild(details);
+                cardBody.appendChild(selectBtn);
+                
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                platformContainer.appendChild(col);
+            });
+
+            function selectPlatform(platform) {
+                currentPlatform = platform;
+                postPreview.style.backgroundColor = platform.color;
+                editorCard.style.display = 'block';
+                
+                // Update character counter
+                updateCharacterCounter();
+                
+                // Scroll to editor
+                editorCard.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Character counter
+            function updateCharacterCounter() {
+                const charCount = postTextInput.value.length;
+                const maxChars = currentPlatform ? currentPlatform.maxChars : 280;
+                const counter = document.getElementById('charCounter') || createCharCounter();
+                counter.textContent = `${charCount}/${maxChars} characters`;
+                counter.style.color = charCount > maxChars ? 'red' : 'inherit';
+            }
+
+            function createCharCounter() {
+                const counter = document.createElement('div');
+                counter.id = 'charCounter';
+                counter.className = 'text-muted small mt-1';
+                postTextInput.parentNode.appendChild(counter);
+                return counter;
+            }
+
+            // Event Listeners
+            profileName.addEventListener('input', () => {
+                document.querySelector('.profile-name').textContent = profileName.value;
+            });
+
+            postTextInput.addEventListener('input', () => {
+                postText.textContent = postTextInput.value;
+                updateCharacterCounter();
+            });
+
+            postImageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = postImage.querySelector('img');
+                        img.src = e.target.result;
+                        
+                        // Adjust image size based on platform aspect ratio
+                        if (currentPlatform) {
+                            const [width, height] = currentPlatform.aspectRatio.split(':').map(Number);
+                            const ratio = height / width;
+                            img.style.aspectRatio = `${width}:${height}`;
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            backgroundColor.addEventListener('input', () => {
+                postPreview.style.backgroundColor = backgroundColor.value;
+            });
+
+            textColor.addEventListener('input', () => {
+                postText.style.color = textColor.value;
+            });
+
+            fontSize.addEventListener('input', () => {
+                postText.style.fontSize = fontSize.value + 'px';
+            });
+
+            hashtags.addEventListener('input', () => {
+                const hashtagList = hashtags.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+                const hashtagText = hashtagList.map(tag => `#${tag}`).join(' ');
+                postText.textContent = postTextInput.value + '\n\n' + hashtagText;
+                updateCharacterCounter();
+            });
+
+            // Download functionality
+            document.getElementById('downloadPost').addEventListener('click', () => {
+                const postElement = document.getElementById('postPreview');
+                
+                html2canvas(postElement, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `social-media-post-${currentPlatform.id}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            });
+
+            // Copy to clipboard functionality
+            document.getElementById('copyPost').addEventListener('click', () => {
+                const postContent = postTextInput.value;
+                const hashtagList = hashtags.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+                const hashtagText = hashtagList.map(tag => `#${tag}`).join(' ');
+                const fullText = postContent + '\n\n' + hashtagText;
+                
+                navigator.clipboard.writeText(fullText).then(() => {
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3';
+                    alert.innerHTML = `
+                        Post content copied to clipboard!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    document.body.appendChild(alert);
+                    setTimeout(() => alert.remove(), 3000);
+                });
+            });
+
+            // Add fade-in animation to cards
+            document.querySelectorAll('.card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+
+            // Add hover effects to platform cards
+            document.querySelectorAll('.platform-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'scale(1.02)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'scale(1)';
+                });
+            });
+
+            // Add smooth transitions to form controls
+            document.querySelectorAll('.form-control, .form-select').forEach(control => {
+                control.addEventListener('focus', () => {
+                    control.style.transition = 'all 0.3s ease';
+                });
+            });
+        }
+
+        function applyTemplate(type) {
+            const templates = {
+                announcement: {
+                    text: "🎉 Exciting News! We're thrilled to announce [your announcement]. Stay tuned for more updates! #exciting #news #update",
+                    hashtags: "exciting,news,update"
+                },
+                question: {
+                    text: "❓ Quick question for our community: [your question]? Let us know in the comments! #community #engagement #discussion",
+                    hashtags: "community,engagement,discussion"
+                },
+                promotion: {
+                    text: "🔥 Special Offer! Get [discount] off on [product/service] for a limited time. Use code [CODE] at checkout. #specialoffer #discount #limitedtime",
+                    hashtags: "specialoffer,discount,limitedtime"
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                postTextInput.value = template.text;
+                hashtags.value = template.hashtags;
+                postText.textContent = template.text;
+                updateCharacterCounter();
+            }
+        }
+
+        document.getElementById('generateSuggestions').addEventListener('click', async () => {
+            const prompt = document.getElementById('aiPrompt').value;
+            if (!prompt) return;
+
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            suggestionsContainer.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+
+            try {
+                // Simulate AI response (replace with actual AI API call)
+                const suggestions = [
+                    `Based on "${prompt}", here's a suggestion: ${prompt} with a creative twist!`,
+                    `Try this engaging version: ${prompt} with a call to action!`,
+                    `Here's a professional approach: ${prompt} with industry insights!`
+                ];
+
+                suggestionsContainer.innerHTML = '';
+                suggestions.forEach(suggestion => {
+                    const div = document.createElement('div');
+                    div.className = 'card mb-2';
+                    div.innerHTML = `
+                        <div class="card-body">
+                            <p class="card-text">${suggestion}</p>
+                            <button class="btn btn-sm btn-outline-primary" onclick="useSuggestion('${suggestion}')">
+                                Use This
+                            </button>
+                        </div>
+                    `;
+                    suggestionsContainer.appendChild(div);
+                });
+            } catch (error) {
+                suggestionsContainer.innerHTML = '<div class="alert alert-danger">Failed to generate suggestions</div>';
+            }
+        });
+
+        function useSuggestion(suggestion) {
+            postTextInput.value = suggestion;
+            postText.textContent = suggestion;
+            updateCharacterCounter();
+        }
+
+        document.getElementById('fontFamily').addEventListener('change', (e) => {
+            postText.style.fontFamily = e.target.value;
+        });
+
+        document.getElementById('postSchedule').addEventListener('change', (e) => {
+            const scheduledTime = new Date(e.target.value);
+            const now = new Date();
+            if (scheduledTime > now) {
+                const timeDiff = scheduledTime - now;
+                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-info alert-dismissible fade show position-fixed top-0 end-0 m-3';
+                alert.innerHTML = `
+                    Post scheduled for ${hours}h ${minutes}m from now
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alert);
+                setTimeout(() => alert.remove(), 5000);
+            }
+        });
+    </script>
+    <style>
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+        }
+
+        /* Platform Selection */
+        .platform-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .platform-card:hover {
+            transform: scale(1.02);
+        }
+
+        .platform-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Post Preview */
+        .post-preview-container {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-preview {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .profile-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .post-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .post-text {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .post-image-container {
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .post-image {
+            width: 100%;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .post-image:hover {
+            transform: scale(1.02);
+        }
+
+        .post-actions {
+            display: flex;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s ease;
+        }
+
+        .action-btn:hover {
+            color: #333;
+        }
+
+        .action-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Controls */
+        .control-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            height: 100%;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #0d6efd, #0a58ca);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid #0d6efd;
+        }
+
+        .btn-outline-primary:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+        /* Templates */
+        .template-card {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: #0d6efd;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .post-preview-container {
+                padding: 1rem;
+            }
+
+            .control-section {
+                margin-top: 2rem;
+            }
+
+            .platform-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</body>
+</html> 

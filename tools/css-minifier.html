@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Minifier - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
+    <!-- Clean-CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/clean-css@5.3.2/dist/clean-css.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">CSS Minifier</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Minify and beautify CSS code with various optimization options.
+                        </p>
+
+                        <!-- Mode Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Mode Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="mode" id="minifyMode" checked>
+                                    <label class="btn btn-outline-secondary" for="minifyMode">
+                                        <i class="fas fa-compress"></i> Minify
+                                    </label>
+                                    <input type="radio" class="btn-check" name="mode" id="beautifyMode">
+                                    <label class="btn btn-outline-secondary" for="beautifyMode">
+                                        <i class="fas fa-expand"></i> Beautify
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Minification Options -->
+                        <div id="minifyOptions" class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Minification Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="removeComments" checked>
+                                            <label class="form-check-label" for="removeComments">Remove Comments</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="removeEmptyRules" checked>
+                                            <label class="form-check-label" for="removeEmptyRules">Remove Empty Rules</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="mergeMediaQueries" checked>
+                                            <label class="form-check-label" for="mergeMediaQueries">Merge Media Queries</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="removeDuplicates" checked>
+                                            <label class="form-check-label" for="removeDuplicates">Remove Duplicates</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="optimizeSelectors" checked>
+                                            <label class="form-check-label" for="optimizeSelectors">Optimize Selectors</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="optimizeValues" checked>
+                                            <label class="form-check-label" for="optimizeValues">Optimize Values</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Beautification Options -->
+                        <div id="beautifyOptions" class="card mb-4 d-none">
+                            <div class="card-header">
+                                <h5 class="mb-0">Beautification Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Indentation</label>
+                                            <select class="form-select" id="indentation">
+                                                <option value="2">2 spaces</option>
+                                                <option value="4" selected>4 spaces</option>
+                                                <option value="tab">Tab</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Line Break Style</label>
+                                            <select class="form-select" id="lineBreak">
+                                                <option value="lf">LF (Unix)</option>
+                                                <option value="crlf" selected>CRLF (Windows)</option>
+                                                <option value="cr">CR (Mac)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Editor and Output -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Input</h5>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary" id="clearInput">
+                                                <i class="fas fa-trash"></i> Clear
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" id="pasteInput">
+                                                <i class="fas fa-paste"></i> Paste
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <textarea id="input"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Output</h5>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary" id="clearOutput">
+                                                <i class="fas fa-trash"></i> Clear
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" id="copyOutput">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" id="downloadOutput">
+                                                <i class="fas fa-download"></i> Download
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <textarea id="output"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Code Analysis -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Code Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Original Size</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="originalSize" readonly>
+                                                <span class="input-group-text">bytes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Minified Size</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="minifiedSize" readonly>
+                                                <span class="input-group-text">bytes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Reduction</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="reduction" readonly>
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Examples -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common Examples</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Bootstrap Reset</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="* { box-sizing: border-box; }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Flexbox Center</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value=".center { display: flex; justify-content: center; align-items: center; }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Media Query</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="@media (max-width: 768px) { .container { width: 100%; } }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Animation</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- CodeMirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeCSSMinifier();
+        });
+
+        function initializeCSSMinifier() {
+            // DOM Elements
+            const minifyMode = document.getElementById('minifyMode');
+            const beautifyMode = document.getElementById('beautifyMode');
+            const minifyOptions = document.getElementById('minifyOptions');
+            const beautifyOptions = document.getElementById('beautifyOptions');
+            const input = document.getElementById('input');
+            const output = document.getElementById('output');
+            const clearInput = document.getElementById('clearInput');
+            const pasteInput = document.getElementById('pasteInput');
+            const clearOutput = document.getElementById('clearOutput');
+            const copyOutput = document.getElementById('copyOutput');
+            const downloadOutput = document.getElementById('downloadOutput');
+            const originalSize = document.getElementById('originalSize');
+            const minifiedSize = document.getElementById('minifiedSize');
+            const reduction = document.getElementById('reduction');
+
+            // Initialize CodeMirror
+            const inputEditor = CodeMirror.fromTextArea(input, {
+                mode: 'css',
+                theme: 'monokai',
+                lineNumbers: true,
+                lineWrapping: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 4
+            });
+
+            const outputEditor = CodeMirror.fromTextArea(output, {
+                mode: 'css',
+                theme: 'eclipse',
+                lineNumbers: true,
+                lineWrapping: true,
+                readOnly: true
+            });
+
+            // Process CSS
+            function processCSS() {
+                const css = inputEditor.getValue();
+                if (!css) {
+                    outputEditor.setValue('');
+                    updateAnalysis(0, 0);
+                    return;
+                }
+
+                const isMinify = minifyMode.checked;
+                let processedCSS;
+
+                if (isMinify) {
+                    const options = {
+                        level: {
+                            1: {
+                                all: true,
+                                removeComments: document.getElementById('removeComments').checked,
+                                removeEmptyRules: document.getElementById('removeEmptyRules').checked
+                            },
+                            2: {
+                                all: true,
+                                mergeMediaQueries: document.getElementById('mergeMediaQueries').checked,
+                                removeDuplicates: document.getElementById('removeDuplicates').checked,
+                                optimizeSelectors: document.getElementById('optimizeSelectors').checked,
+                                optimizeValues: document.getElementById('optimizeValues').checked
+                            }
+                        }
+                    };
+
+                    processedCSS = new CleanCSS(options).minify(css).styles;
+                } else {
+                    // Beautify CSS
+                    const indentation = document.getElementById('indentation').value;
+                    const lineBreak = document.getElementById('lineBreak').value;
+                    const indent = indentation === 'tab' ? '\t' : ' '.repeat(parseInt(indentation));
+                    
+                    processedCSS = css
+                        .replace(/\s*{\s*/g, ' {\n' + indent)
+                        .replace(/\s*}\s*/g, '\n}\n\n')
+                        .replace(/\s*;\s*/g, ';\n' + indent)
+                        .replace(/\s*,\s*/g, ', ')
+                        .replace(/\n\s*\n\s*\n/g, '\n\n');
+                    
+                    if (lineBreak === 'crlf') {
+                        processedCSS = processedCSS.replace(/\n/g, '\r\n');
+                    } else if (lineBreak === 'cr') {
+                        processedCSS = processedCSS.replace(/\n/g, '\r');
+                    }
+                }
+
+                outputEditor.setValue(processedCSS);
+                updateAnalysis(css.length, processedCSS.length);
+            }
+
+            // Update analysis
+            function updateAnalysis(original, minified) {
+                originalSize.value = original;
+                minifiedSize.value = minified;
+                reduction.value = original ? ((original - minified) / original * 100).toFixed(2) : '0.00';
+            }
+
+            // Change mode
+            minifyMode.addEventListener('change', function() {
+                minifyOptions.classList.remove('d-none');
+                beautifyOptions.classList.add('d-none');
+                processCSS();
+            });
+
+            beautifyMode.addEventListener('change', function() {
+                minifyOptions.classList.add('d-none');
+                beautifyOptions.classList.remove('d-none');
+                processCSS();
+            });
+
+            // Clear input
+            clearInput.addEventListener('click', function() {
+                inputEditor.setValue('');
+                processCSS();
+            });
+
+            // Paste input
+            pasteInput.addEventListener('click', async function() {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    inputEditor.setValue(text);
+                    processCSS();
+                } catch (error) {
+                    alert('Failed to paste text. Please check clipboard permissions.');
+                }
+            });
+
+            // Clear output
+            clearOutput.addEventListener('click', function() {
+                outputEditor.setValue('');
+                updateAnalysis(0, 0);
+            });
+
+            // Copy output
+            copyOutput.addEventListener('click', async function() {
+                try {
+                    await navigator.clipboard.writeText(outputEditor.getValue());
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Copied';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 1000);
+                } catch (error) {
+                    alert('Failed to copy CSS. Please check clipboard permissions.');
+                }
+            });
+
+            // Download output
+            downloadOutput.addEventListener('click', function() {
+                const css = outputEditor.getValue();
+                const blob = new Blob([css], { type: 'text/css' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'styles.css';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Use example
+            document.querySelectorAll('.use-example').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const currentValue = inputEditor.getValue();
+                    const newValue = currentValue ? currentValue + '\n\n' + input.value : input.value;
+                    inputEditor.setValue(newValue);
+                    processCSS();
+                });
+            });
+
+            // Event listeners for options
+            document.querySelectorAll('#minifyOptions input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', processCSS);
+            });
+
+            document.querySelectorAll('#beautifyOptions select').forEach(select => {
+                select.addEventListener('change', processCSS);
+            });
+
+            // Update on input change
+            inputEditor.on('change', processCSS);
+
+            // Initial setup
+            processCSS();
+        }
+    </script>
+    <style>
+        .CodeMirror {
+            height: 500px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .input-group input[readonly] {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+</html> 

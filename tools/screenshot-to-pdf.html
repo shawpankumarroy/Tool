@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshot to PDF - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jspdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Screenshot to PDF</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Capture screenshots and convert them to PDF files with customizable settings.
+                        </p>
+
+                        <!-- Capture Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Capture Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="captureType" class="form-label">Capture Type</label>
+                                            <select class="form-select" id="captureType">
+                                                <option value="full">Full Page</option>
+                                                <option value="visible">Visible Area</option>
+                                                <option value="selection">Selection</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="pageSize" class="form-label">Page Size</label>
+                                            <select class="form-select" id="pageSize">
+                                                <option value="a4">A4</option>
+                                                <option value="letter">Letter</option>
+                                                <option value="legal">Legal</option>
+                                                <option value="custom">Custom</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="customSizeOptions" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="customWidth" class="form-label">Width (mm)</label>
+                                            <input type="number" class="form-control" id="customWidth" value="210">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="customHeight" class="form-label">Height (mm)</label>
+                                            <input type="number" class="form-control" id="customHeight" value="297">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="orientation" class="form-label">Orientation</label>
+                                            <select class="form-select" id="orientation">
+                                                <option value="portrait">Portrait</option>
+                                                <option value="landscape">Landscape</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="margin" class="form-label">Margin (mm)</label>
+                                            <input type="number" class="form-control" id="margin" value="10" min="0" max="50">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Capture Area -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Capture Area</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" id="captureButton">
+                                        <i class="fas fa-camera"></i> Capture
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="resetButton">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="preview-container">
+                                    <div id="selectionArea" style="display: none;">
+                                        <div class="selection-handle top-left"></div>
+                                        <div class="selection-handle top-right"></div>
+                                        <div class="selection-handle bottom-left"></div>
+                                        <div class="selection-handle bottom-right"></div>
+                                    </div>
+                                    <img id="screenshotPreview" class="img-fluid" style="display: none;">
+                                    <div class="alert alert-info" id="previewStatus">
+                                        Click "Capture" to take a screenshot.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PDF Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">PDF Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="title" class="form-label">Title</label>
+                                            <input type="text" class="form-control" id="title" placeholder="Enter PDF title">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="author" class="form-label">Author</label>
+                                            <input type="text" class="form-control" id="author" placeholder="Enter author name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="compression" class="form-label">Compression</label>
+                                            <select class="form-select" id="compression">
+                                                <option value="none">None</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="high">High</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="resolution" class="form-label">Resolution (DPI)</label>
+                                            <select class="form-select" id="resolution">
+                                                <option value="72">72 DPI</option>
+                                                <option value="150">150 DPI</option>
+                                                <option value="300">300 DPI</option>
+                                                <option value="600">600 DPI</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PDF Preview -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">PDF Preview</h5>
+                                <button class="btn btn-outline-primary" id="downloadButton" disabled>
+                                    <i class="fas fa-download"></i> Download PDF
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <iframe id="pdfPreview" class="w-100" style="height: 500px; border: 1px solid #dee2e6; display: none;"></iframe>
+                                    <div class="alert alert-info" id="pdfStatus">
+                                        Generate a PDF to see the preview.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeScreenshotToPdf();
+        });
+
+        function initializeScreenshotToPdf() {
+            // DOM Elements
+            const captureType = document.getElementById('captureType');
+            const pageSize = document.getElementById('pageSize');
+            const customSizeOptions = document.getElementById('customSizeOptions');
+            const customWidth = document.getElementById('customWidth');
+            const customHeight = document.getElementById('customHeight');
+            const orientation = document.getElementById('orientation');
+            const margin = document.getElementById('margin');
+            const captureButton = document.getElementById('captureButton');
+            const resetButton = document.getElementById('resetButton');
+            const selectionArea = document.getElementById('selectionArea');
+            const screenshotPreview = document.getElementById('screenshotPreview');
+            const previewStatus = document.getElementById('previewStatus');
+            const title = document.getElementById('title');
+            const author = document.getElementById('author');
+            const compression = document.getElementById('compression');
+            const resolution = document.getElementById('resolution');
+            const pdfPreview = document.getElementById('pdfPreview');
+            const pdfStatus = document.getElementById('pdfStatus');
+            const downloadButton = document.getElementById('downloadButton');
+
+            // Current state
+            let currentScreenshot = null;
+            let pdfBlob = null;
+
+            // Page size handler
+            pageSize.addEventListener('change', () => {
+                customSizeOptions.style.display = pageSize.value === 'custom' ? 'block' : 'none';
+            });
+
+            // Reset button handler
+            resetButton.addEventListener('click', () => {
+                currentScreenshot = null;
+                pdfBlob = null;
+                screenshotPreview.style.display = 'none';
+                selectionArea.style.display = 'none';
+                pdfPreview.style.display = 'none';
+                previewStatus.className = 'alert alert-info';
+                previewStatus.textContent = 'Click "Capture" to take a screenshot.';
+                pdfStatus.className = 'alert alert-info';
+                pdfStatus.textContent = 'Generate a PDF to see the preview.';
+                downloadButton.disabled = true;
+            });
+
+            // Download button handler
+            downloadButton.addEventListener('click', () => {
+                if (pdfBlob) {
+                    const url = URL.createObjectURL(pdfBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${title.value || 'screenshot'}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            });
+
+            // Capture button handler
+            captureButton.addEventListener('click', () => {
+                previewStatus.className = 'alert alert-info';
+                previewStatus.textContent = 'Capturing screenshot...';
+
+                if (captureType.value === 'selection') {
+                    selectionArea.style.display = 'block';
+                    // TODO: Implement selection capture
+                } else {
+                    html2canvas(document.body, {
+                        scale: parseInt(resolution.value) / 72,
+                        useCORS: true,
+                        logging: false,
+                        allowTaint: true
+                    }).then(canvas => {
+                        currentScreenshot = canvas;
+                        screenshotPreview.src = canvas.toDataURL();
+                        screenshotPreview.style.display = 'block';
+                        previewStatus.className = 'alert alert-success';
+                        previewStatus.textContent = 'Screenshot captured successfully!';
+                        generatePdf();
+                    }).catch(err => {
+                        previewStatus.className = 'alert alert-danger';
+                        previewStatus.textContent = `Error: ${err.message}`;
+                    });
+                }
+            });
+
+            // Helper functions
+            function generatePdf() {
+                if (!currentScreenshot) return;
+
+                pdfStatus.className = 'alert alert-info';
+                pdfStatus.textContent = 'Generating PDF...';
+                downloadButton.disabled = true;
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: orientation.value,
+                    unit: 'mm',
+                    format: getPageSize()
+                });
+
+                // Add metadata
+                if (title.value) pdf.setTitle(title.value);
+                if (author.value) pdf.setAuthor(author.value);
+
+                // Calculate dimensions
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const marginValue = parseInt(margin.value);
+                const contentWidth = pageWidth - (marginValue * 2);
+                const contentHeight = pageHeight - (marginValue * 2);
+
+                // Add image
+                const imgData = currentScreenshot.toDataURL('image/jpeg', getCompressionQuality());
+                pdf.addImage(imgData, 'JPEG', marginValue, marginValue, contentWidth, contentHeight);
+
+                // Generate blob
+                pdfBlob = pdf.output('blob');
+                pdfPreview.src = URL.createObjectURL(pdfBlob);
+                pdfPreview.style.display = 'block';
+                pdfStatus.className = 'alert alert-success';
+                pdfStatus.textContent = 'PDF generated successfully!';
+                downloadButton.disabled = false;
+            }
+
+            function getPageSize() {
+                if (pageSize.value === 'custom') {
+                    return [parseInt(customWidth.value), parseInt(customHeight.value)];
+                }
+                return pageSize.value;
+            }
+
+            function getCompressionQuality() {
+                switch (compression.value) {
+                    case 'high': return 0.5;
+                    case 'medium': return 0.75;
+                    default: return 1;
+                }
+            }
+        }
+    </script>
+    <style>
+        .preview-container {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            position: relative;
+        }
+        .preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+        #selectionArea {
+            position: absolute;
+            border: 2px dashed #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+            cursor: move;
+        }
+        .selection-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #0d6efd;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+        .selection-handle.top-left {
+            top: 0;
+            left: 0;
+            cursor: nw-resize;
+        }
+        .selection-handle.top-right {
+            top: 0;
+            right: 0;
+            cursor: ne-resize;
+        }
+        .selection-handle.bottom-left {
+            bottom: 0;
+            left: 0;
+            cursor: sw-resize;
+        }
+        .selection-handle.bottom-right {
+            bottom: 0;
+            right: 0;
+            cursor: se-resize;
+        }
+    </style>
+</body>
+</html> 

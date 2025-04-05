@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Contrast Checker - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Spectrum Color Picker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Color Contrast Checker</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Check the contrast ratio between text and background colors for accessibility compliance.
+                        </p>
+
+                        <!-- Color Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="textColor" class="form-label">Text Color</label>
+                                        <input type="text" class="form-control" id="textColor" value="#000000">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="backgroundColor" class="form-label">Background Color</label>
+                                        <input type="text" class="form-control" id="backgroundColor" value="#ffffff">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Preview</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="preview-container p-4 rounded" id="previewContainer">
+                                    <p class="mb-0" id="previewText">
+                                        This is a sample text to demonstrate the contrast between the selected colors.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contrast Results -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Contrast Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Contrast Ratio</label>
+                                            <input type="text" class="form-control" id="contrastRatio" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">WCAG Compliance</label>
+                                            <input type="text" class="form-control" id="compliance" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress mb-3" style="height: 20px;">
+                                    <div class="progress-bar" id="contrastBar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <div class="alert" id="complianceAlert" role="alert">
+                                    <!-- Compliance message will be shown here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Information -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Text Color</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="textColorHex" readonly>
+                                                <input type="text" class="form-control" id="textColorRGB" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Background Color</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="backgroundColorHex" readonly>
+                                                <input type="text" class="form-control" id="backgroundColorRGB" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WCAG Guidelines -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">WCAG Guidelines</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Level</th>
+                                                <th>Text Size</th>
+                                                <th>Required Ratio</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="guidelinesTable">
+                                            <!-- Guidelines will be populated dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeColorContrastChecker();
+        });
+
+        function initializeColorContrastChecker() {
+            // DOM Elements
+            const textColor = document.getElementById('textColor');
+            const backgroundColor = document.getElementById('backgroundColor');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewText = document.getElementById('previewText');
+            const contrastRatio = document.getElementById('contrastRatio');
+            const compliance = document.getElementById('compliance');
+            const contrastBar = document.getElementById('contrastBar');
+            const complianceAlert = document.getElementById('complianceAlert');
+            const textColorHex = document.getElementById('textColorHex');
+            const textColorRGB = document.getElementById('textColorRGB');
+            const backgroundColorHex = document.getElementById('backgroundColorHex');
+            const backgroundColorRGB = document.getElementById('backgroundColorRGB');
+            const guidelinesTable = document.getElementById('guidelinesTable');
+
+            // Initialize color pickers
+            $("#textColor").spectrum({
+                type: "color",
+                showInput: true,
+                showInitial: true,
+                showAlpha: false,
+                preferredFormat: "hex",
+                change: updateContrast
+            });
+
+            $("#backgroundColor").spectrum({
+                type: "color",
+                showInput: true,
+                showInitial: true,
+                showAlpha: false,
+                preferredFormat: "hex",
+                change: updateContrast
+            });
+
+            // Convert hex to RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
+            // Calculate relative luminance
+            function getRelativeLuminance(r, g, b) {
+                const [rs, gs, bs] = [r, g, b].map(c => {
+                    c = c / 255;
+                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                });
+                return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+            }
+
+            // Calculate contrast ratio
+            function getContrastRatio(color1, color2) {
+                const l1 = getRelativeLuminance(color1.r, color1.g, color1.b);
+                const l2 = getRelativeLuminance(color2.r, color2.g, color2.b);
+                const lighter = Math.max(l1, l2);
+                const darker = Math.min(l1, l2);
+                return (lighter + 0.05) / (darker + 0.05);
+            }
+
+            // Update color information
+            function updateColorInfo() {
+                const textHex = textColor.value;
+                const bgHex = backgroundColor.value;
+                const textRgb = hexToRgb(textHex);
+                const bgRgb = hexToRgb(bgHex);
+
+                textColorHex.value = textHex;
+                textColorRGB.value = `rgb(${textRgb.r}, ${textRgb.g}, ${textRgb.b})`;
+                backgroundColorHex.value = bgHex;
+                backgroundColorRGB.value = `rgb(${bgRgb.r}, ${bgRgb.g}, ${bgRgb.b})`;
+
+                previewContainer.style.backgroundColor = bgHex;
+                previewText.style.color = textHex;
+            }
+
+            // Update contrast and compliance
+            function updateContrast() {
+                const textRgb = hexToRgb(textColor.value);
+                const bgRgb = hexToRgb(backgroundColor.value);
+                const ratio = getContrastRatio(textRgb, bgRgb);
+                const ratioText = ratio.toFixed(2);
+
+                contrastRatio.value = ratioText;
+                updateColorInfo();
+
+                // Update progress bar
+                const percentage = Math.min((ratio / 21) * 100, 100);
+                contrastBar.style.width = `${percentage}%`;
+
+                // Update compliance status
+                const guidelines = [
+                    { level: 'AA', size: 'Normal', ratio: 4.5 },
+                    { level: 'AA', size: 'Large', ratio: 3 },
+                    { level: 'AAA', size: 'Normal', ratio: 7 },
+                    { level: 'AAA', size: 'Large', ratio: 4.5 }
+                ];
+
+                guidelinesTable.innerHTML = '';
+                guidelines.forEach(guideline => {
+                    const meets = ratio >= guideline.ratio;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${guideline.level}</td>
+                        <td>${guideline.size}</td>
+                        <td>${guideline.ratio}:1</td>
+                        <td>
+                            <span class="badge ${meets ? 'bg-success' : 'bg-danger'}">
+                                ${meets ? 'Pass' : 'Fail'}
+                            </span>
+                        </td>
+                    `;
+                    guidelinesTable.appendChild(row);
+                });
+
+                // Update compliance message
+                if (ratio >= 7) {
+                    compliance.value = 'AAA (Normal & Large)';
+                    complianceAlert.className = 'alert alert-success';
+                    complianceAlert.textContent = 'Excellent contrast! Meets all WCAG guidelines.';
+                } else if (ratio >= 4.5) {
+                    compliance.value = 'AA (Normal & Large)';
+                    complianceAlert.className = 'alert alert-success';
+                    complianceAlert.textContent = 'Good contrast! Meets WCAG AA guidelines.';
+                } else if (ratio >= 3) {
+                    compliance.value = 'AA (Large)';
+                    complianceAlert.className = 'alert alert-warning';
+                    complianceAlert.textContent = 'Limited compliance. Only meets WCAG AA guidelines for large text.';
+                } else {
+                    compliance.value = 'Fail';
+                    complianceAlert.className = 'alert alert-danger';
+                    complianceAlert.textContent = 'Poor contrast! Does not meet WCAG guidelines.';
+                }
+            }
+
+            // Initial setup
+            updateContrast();
+        }
+    </script>
+    <style>
+        .preview-container {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+        .sp-container {
+            z-index: 1000;
+        }
+    </style>
+</body>
+</html> 

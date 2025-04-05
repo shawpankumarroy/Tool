@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PNG Converter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Image to PNG Converter</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Convert your images to PNG format with high quality. Supports JPG, GIF, BMP, and other formats.
+                        </p>
+
+                        <!-- Upload Area -->
+                        <div class="upload-area p-4 text-center border rounded mb-4">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                            <h4>Drag & Drop your image here</h4>
+                            <p class="text-muted">or</p>
+                            <input type="file" id="imageInput" class="d-none" accept="image/*">
+                            <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
+                                Choose File
+                            </button>
+                        </div>
+
+                        <!-- Preview Area -->
+                        <div id="previewArea" class="d-none">
+                            <h5>Preview</h5>
+                            <div class="preview-container mb-3">
+                                <img id="imagePreview" class="img-fluid rounded" alt="Preview">
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span id="fileInfo" class="text-muted"></span>
+                                <button id="convertBtn" class="btn btn-success">
+                                    <i class="fas fa-exchange-alt me-2"></i>Convert to PNG
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Download Area -->
+                        <div id="downloadArea" class="d-none text-center">
+                            <h5 class="text-success">Conversion Complete!</h5>
+                            <button id="downloadBtn" class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i>Download PNG
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+        });
+
+        // Tool-specific JavaScript
+        const imageInput = document.getElementById('imageInput');
+        const previewArea = document.getElementById('previewArea');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileInfo = document.getElementById('fileInfo');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadArea = document.getElementById('downloadArea');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let currentFile = null;
+
+        // Handle file input
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                currentFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewArea.classList.remove('d-none');
+                    fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle drag and drop
+        const uploadArea = document.querySelector('.upload-area');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-primary');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('border-primary');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-primary');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                imageInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                imageInput.dispatchEvent(event);
+            }
+        });
+
+        // Convert button click handler
+        convertBtn.addEventListener('click', function() {
+            if (currentFile) {
+                // Simulate conversion process
+                convertBtn.disabled = true;
+                convertBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Converting...';
+                
+                setTimeout(() => {
+                    // In a real implementation, this would convert the image to PNG
+                    previewArea.classList.add('d-none');
+                    downloadArea.classList.remove('d-none');
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = '<i class="fas fa-exchange-alt me-2"></i>Convert to PNG';
+                }, 1500);
+            }
+        });
+
+        // Download button click handler
+        downloadBtn.addEventListener('click', function() {
+            if (currentFile) {
+                // In a real implementation, this would download the converted PNG
+                const link = document.createElement('a');
+                link.href = imagePreview.src;
+                link.download = currentFile.name.replace(/\.[^/.]+$/, '') + '.png';
+                link.click();
+            }
+        });
+    </script>
+</body>
+</html> 

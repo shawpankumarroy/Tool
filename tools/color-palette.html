@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Spectrum Color Picker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js"></script>
+    <!-- TinyColor -->
+    <script src="https://cdn.jsdelivr.net/npm/tinycolor2@1.4.2/tinycolor.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Color Palette Generator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Create beautiful color palettes with complementary, analogous, and monochromatic colors.
+                        </p>
+
+                        <!-- Color Picker -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Base Color</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <input type="text" id="colorPicker" class="form-control" value="#ff0000">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center">
+                                            <div id="colorPreview" class="me-3" style="width: 50px; height: 50px; border-radius: 4px;"></div>
+                                            <div>
+                                                <div class="mb-1">
+                                                    <span class="text-muted">HEX:</span>
+                                                    <span id="hexValue" class="ms-2">#ff0000</span>
+                                                </div>
+                                                <div class="mb-1">
+                                                    <span class="text-muted">RGB:</span>
+                                                    <span id="rgbValue" class="ms-2">rgb(255, 0, 0)</span>
+                                                </div>
+                                                <div>
+                                                    <span class="text-muted">HSL:</span>
+                                                    <span id="hslValue" class="ms-2">hsl(0, 100%, 50%)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Schemes -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Schemes</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Complementary -->
+                                    <div class="col-md-6 mb-4">
+                                        <h6 class="mb-3">Complementary</h6>
+                                        <div class="d-flex" id="complementaryColors">
+                                            <!-- Colors will be generated here -->
+                                        </div>
+                                    </div>
+                                    <!-- Analogous -->
+                                    <div class="col-md-6 mb-4">
+                                        <h6 class="mb-3">Analogous</h6>
+                                        <div class="d-flex" id="analogousColors">
+                                            <!-- Colors will be generated here -->
+                                        </div>
+                                    </div>
+                                    <!-- Triadic -->
+                                    <div class="col-md-6 mb-4">
+                                        <h6 class="mb-3">Triadic</h6>
+                                        <div class="d-flex" id="triadicColors">
+                                            <!-- Colors will be generated here -->
+                                        </div>
+                                    </div>
+                                    <!-- Monochromatic -->
+                                    <div class="col-md-6 mb-4">
+                                        <h6 class="mb-3">Monochromatic</h6>
+                                        <div class="d-flex" id="monochromaticColors">
+                                            <!-- Colors will be generated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Saved Palettes -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Saved Palettes</h5>
+                                <button class="btn btn-primary btn-sm" id="savePalette">
+                                    <i class="fas fa-save"></i> Save Current
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="savedPalettes" class="row">
+                                    <!-- Saved palettes will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeColorPalette();
+        });
+
+        function initializeColorPalette() {
+            // Initialize Spectrum color picker
+            $("#colorPicker").spectrum({
+                type: "component",
+                showInput: true,
+                showInitial: true,
+                showAlpha: false,
+                showPalette: true,
+                palette: [
+                    ["#000000", "#444444", "#666666", "#999999", "#cccccc", "#eeeeee", "#f3f3f3", "#ffffff"],
+                    ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+                    ["#f4cccc", "#fce5cd", "#fff2cc", "#d9ead3", "#d0e0e3", "#cfe2f3", "#d9d2e9", "#ead1dc"],
+                    ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#9fc5e8", "#b4a7d6", "#d5a6bd"],
+                    ["#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6fa8dc", "#8e7cc3", "#c27ba0"],
+                    ["#c00", "#e69138", "#f1c232", "#6aa84f", "#45818e", "#3d85c6", "#674ea7", "#a64d79"],
+                    ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                    ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                ],
+                change: function(color) {
+                    updateColorInfo(color);
+                    generateColorSchemes(color);
+                }
+            });
+
+            // DOM Elements
+            const colorPreview = document.getElementById('colorPreview');
+            const hexValue = document.getElementById('hexValue');
+            const rgbValue = document.getElementById('rgbValue');
+            const hslValue = document.getElementById('hslValue');
+            const savePalette = document.getElementById('savePalette');
+            const savedPalettes = document.getElementById('savedPalettes');
+
+            // Update color information
+            function updateColorInfo(color) {
+                const tinyColor = tinycolor(color.toHexString());
+                colorPreview.style.backgroundColor = tinyColor.toHexString();
+                hexValue.textContent = tinyColor.toHexString();
+                rgbValue.textContent = tinyColor.toRgbString();
+                hslValue.textContent = tinyColor.toHslString();
+            }
+
+            // Generate color schemes
+            function generateColorSchemes(color) {
+                const baseColor = tinycolor(color.toHexString());
+                
+                // Complementary
+                const complementary = baseColor.complement();
+                generateColorSwatches('complementaryColors', [baseColor, complementary]);
+                
+                // Analogous
+                const analogous = baseColor.analogous();
+                generateColorSwatches('analogousColors', analogous);
+                
+                // Triadic
+                const triadic = baseColor.triad();
+                generateColorSwatches('triadicColors', triadic);
+                
+                // Monochromatic
+                const monochromatic = baseColor.monochromatic();
+                generateColorSwatches('monochromaticColors', monochromatic);
+            }
+
+            // Generate color swatches
+            function generateColorSwatches(containerId, colors) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                
+                colors.forEach(color => {
+                    const swatch = document.createElement('div');
+                    swatch.className = 'color-swatch';
+                    swatch.style.backgroundColor = color.toHexString();
+                    swatch.style.width = '50px';
+                    swatch.style.height = '50px';
+                    swatch.style.marginRight = '10px';
+                    swatch.style.borderRadius = '4px';
+                    swatch.style.position = 'relative';
+                    swatch.style.cursor = 'pointer';
+                    
+                    // Add color info on hover
+                    const info = document.createElement('div');
+                    info.className = 'color-info';
+                    info.style.position = 'absolute';
+                    info.style.bottom = '-30px';
+                    info.style.left = '0';
+                    info.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    info.style.color = 'white';
+                    info.style.padding = '2px 5px';
+                    info.style.borderRadius = '4px';
+                    info.style.fontSize = '12px';
+                    info.style.whiteSpace = 'nowrap';
+                    info.textContent = color.toHexString();
+                    
+                    swatch.appendChild(info);
+                    container.appendChild(swatch);
+                    
+                    // Copy color on click
+                    swatch.addEventListener('click', () => {
+                        navigator.clipboard.writeText(color.toHexString());
+                        const originalText = info.textContent;
+                        info.textContent = 'Copied!';
+                        setTimeout(() => {
+                            info.textContent = originalText;
+                        }, 1000);
+                    });
+                });
+            }
+
+            // Save current palette
+            savePalette.addEventListener('click', () => {
+                const baseColor = tinycolor($("#colorPicker").spectrum("get")).toHexString();
+                const palette = {
+                    baseColor,
+                    complementary: tinycolor(baseColor).complement().toHexString(),
+                    analogous: tinycolor(baseColor).analogous().map(c => c.toHexString()),
+                    triadic: tinycolor(baseColor).triad().map(c => c.toHexString()),
+                    monochromatic: tinycolor(baseColor).monochromatic().map(c => c.toHexString())
+                };
+                
+                // Get existing palettes from localStorage
+                let savedPalettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+                savedPalettes.push(palette);
+                localStorage.setItem('colorPalettes', JSON.stringify(savedPalettes));
+                
+                // Update display
+                displaySavedPalettes();
+            });
+
+            // Display saved palettes
+            function displaySavedPalettes() {
+                const palettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+                savedPalettes.innerHTML = '';
+                
+                palettes.forEach((palette, index) => {
+                    const paletteCard = document.createElement('div');
+                    paletteCard.className = 'col-md-6 mb-3';
+                    paletteCard.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="mb-0">Palette ${index + 1}</h6>
+                                    <button class="btn btn-danger btn-sm delete-palette" data-index="${index}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="color-swatch" style="background-color: ${palette.baseColor}"></div>
+                                    <div class="color-swatch" style="background-color: ${palette.complementary}"></div>
+                                </div>
+                                <div class="d-flex">
+                                    ${palette.analogous.slice(0, 3).map(color => `
+                                        <div class="color-swatch" style="background-color: ${color}"></div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    savedPalettes.appendChild(paletteCard);
+                });
+
+                // Add delete functionality
+                document.querySelectorAll('.delete-palette').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = e.target.closest('.delete-palette').dataset.index;
+                        let palettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+                        palettes.splice(index, 1);
+                        localStorage.setItem('colorPalettes', JSON.stringify(palettes));
+                        displaySavedPalettes();
+                    });
+                });
+            }
+
+            // Initial setup
+            const initialColor = tinycolor("#ff0000");
+            updateColorInfo(initialColor);
+            generateColorSchemes(initialColor);
+            displaySavedPalettes();
+        }
+    </script>
+    <style>
+        .color-swatch {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+        .color-info {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .sp-container {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .sp-picker-container {
+            border: none;
+        }
+        .sp-palette-container {
+            border: none;
+        }
+    </style>
+</body>
+</html> 

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- JsBarcode -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Barcode Generator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Generate various types of barcodes with customization options.
+                        </p>
+
+                        <!-- Barcode Type Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Barcode Type</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Barcode Format</label>
+                                            <select class="form-select" id="barcodeType">
+                                                <option value="CODE128">CODE128</option>
+                                                <option value="CODE39">CODE39</option>
+                                                <option value="EAN13">EAN13</option>
+                                                <option value="EAN8">EAN8</option>
+                                                <option value="UPC">UPC</option>
+                                                <option value="ITF14">ITF14</option>
+                                                <option value="MSI">MSI</option>
+                                                <option value="pharmacode">Pharmacode</option>
+                                                <option value="codabar">Codabar</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Barcode Data</label>
+                                            <input type="text" class="form-control" id="barcodeData" placeholder="Enter barcode data">
+                                            <small class="text-muted" id="formatHelp"></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Barcode Preview</label>
+                                            <div class="barcode-preview-container">
+                                                <svg id="barcodePreview"></svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customization Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Customization Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Width</label>
+                                            <input type="range" class="form-range" id="widthRange" min="1" max="4" step="0.1" value="2">
+                                            <div class="d-flex justify-content-between">
+                                                <small>1</small>
+                                                <small id="widthValue">2</small>
+                                                <small>4</small>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Height</label>
+                                            <input type="range" class="form-range" id="heightRange" min="20" max="200" step="10" value="100">
+                                            <div class="d-flex justify-content-between">
+                                                <small>20</small>
+                                                <small id="heightValue">100</small>
+                                                <small>200</small>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Display Value</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="displayValue" checked>
+                                                <label class="form-check-label" for="displayValue">
+                                                    Show barcode value
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Line Color</label>
+                                            <input type="color" class="form-control form-control-color" id="lineColor" value="#000000">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Background Color</label>
+                                            <input type="color" class="form-control form-control-color" id="backgroundColor" value="#ffffff">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Font Size</label>
+                                            <input type="range" class="form-range" id="fontSizeRange" min="8" max="24" step="1" value="16">
+                                            <div class="d-flex justify-content-between">
+                                                <small>8</small>
+                                                <small id="fontSizeValue">16</small>
+                                                <small>24</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Output Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Output Format</label>
+                                            <select class="form-select" id="outputFormat">
+                                                <option value="svg">SVG</option>
+                                                <option value="png">PNG</option>
+                                                <option value="jpg">JPG</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">File Name</label>
+                                            <input type="text" class="form-control" id="fileName" placeholder="barcode">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" id="downloadBtn">
+                                                <i class="fas fa-download"></i> Download Barcode
+                                            </button>
+                                            <button class="btn btn-outline-primary" id="copyBtn">
+                                                <i class="fas fa-copy"></i> Copy to Clipboard
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Examples -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common Examples</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Product Code</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="123456789012" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">ISBN</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="9783161484100" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">UPC-A</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="012345678905" readonly>
+                                                <button class="btn btn-outline-primary use-example">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeBarcodeGenerator();
+        });
+
+        function initializeBarcodeGenerator() {
+            // DOM Elements
+            const barcodeType = document.getElementById('barcodeType');
+            const barcodeData = document.getElementById('barcodeData');
+            const barcodePreview = document.getElementById('barcodePreview');
+            const widthRange = document.getElementById('widthRange');
+            const heightRange = document.getElementById('heightRange');
+            const displayValue = document.getElementById('displayValue');
+            const lineColor = document.getElementById('lineColor');
+            const backgroundColor = document.getElementById('backgroundColor');
+            const fontSizeRange = document.getElementById('fontSizeRange');
+            const outputFormat = document.getElementById('outputFormat');
+            const fileName = document.getElementById('fileName');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const formatHelp = document.getElementById('formatHelp');
+
+            // Update barcode
+            function updateBarcode() {
+                const type = barcodeType.value;
+                const data = barcodeData.value;
+                const width = parseFloat(widthRange.value);
+                const height = parseInt(heightRange.value);
+                const showValue = displayValue.checked;
+                const lineColorValue = lineColor.value;
+                const backgroundColorValue = backgroundColor.value;
+                const fontSize = parseInt(fontSizeRange.value);
+
+                try {
+                    JsBarcode(barcodePreview, data, {
+                        format: type,
+                        width: width,
+                        height: height,
+                        displayValue: showValue,
+                        lineColor: lineColorValue,
+                        background: backgroundColorValue,
+                        fontSize: fontSize,
+                        margin: 10
+                    });
+                } catch (error) {
+                    console.error('Error generating barcode:', error);
+                }
+            }
+
+            // Update format help text
+            function updateFormatHelp() {
+                const type = barcodeType.value;
+                let helpText = '';
+
+                switch (type) {
+                    case 'CODE128':
+                        helpText = 'Supports any ASCII characters';
+                        break;
+                    case 'CODE39':
+                        helpText = 'Supports numbers, uppercase letters, and some special characters';
+                        break;
+                    case 'EAN13':
+                        helpText = 'Must be 12 or 13 digits';
+                        break;
+                    case 'EAN8':
+                        helpText = 'Must be 7 or 8 digits';
+                        break;
+                    case 'UPC':
+                        helpText = 'Must be 11 or 12 digits';
+                        break;
+                    case 'ITF14':
+                        helpText = 'Must be 13 or 14 digits';
+                        break;
+                    case 'MSI':
+                        helpText = 'Supports numbers only';
+                        break;
+                    case 'pharmacode':
+                        helpText = 'Supports numbers from 3 to 131070';
+                        break;
+                    case 'codabar':
+                        helpText = 'Supports numbers, letters A-D, and special characters';
+                        break;
+                }
+
+                formatHelp.textContent = helpText;
+            }
+
+            // Download barcode
+            function downloadBarcode() {
+                const format = outputFormat.value;
+                const name = fileName.value || 'barcode';
+                const svg = barcodePreview.outerHTML;
+                const blob = new Blob([svg], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+
+                if (format === 'svg') {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${name}.svg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                } else {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        const dataURL = canvas.toDataURL(`image/${format}`);
+                        const a = document.createElement('a');
+                        a.href = dataURL;
+                        a.download = `${name}.${format}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    };
+
+                    img.src = url;
+                }
+
+                URL.revokeObjectURL(url);
+            }
+
+            // Copy barcode to clipboard
+            async function copyBarcode() {
+                const format = outputFormat.value;
+                const svg = barcodePreview.outerHTML;
+
+                if (format === 'svg') {
+                    try {
+                        await navigator.clipboard.writeText(svg);
+                        showCopySuccess();
+                    } catch (error) {
+                        console.error('Failed to copy SVG:', error);
+                    }
+                } else {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        canvas.toBlob(blob => {
+                            navigator.clipboard.write([
+                                new ClipboardItem({
+                                    [`image/${format}`]: blob
+                                })
+                            ]).then(() => {
+                                showCopySuccess();
+                            }).catch(error => {
+                                console.error('Failed to copy image:', error);
+                            });
+                        }, `image/${format}`);
+                    };
+
+                    img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+                }
+            }
+
+            // Show copy success message
+            function showCopySuccess() {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 1000);
+            }
+
+            // Event listeners
+            barcodeType.addEventListener('change', function() {
+                updateFormatHelp();
+                updateBarcode();
+            });
+
+            barcodeData.addEventListener('input', updateBarcode);
+
+            widthRange.addEventListener('input', function() {
+                document.getElementById('widthValue').textContent = this.value;
+                updateBarcode();
+            });
+
+            heightRange.addEventListener('input', function() {
+                document.getElementById('heightValue').textContent = this.value;
+                updateBarcode();
+            });
+
+            displayValue.addEventListener('change', updateBarcode);
+            lineColor.addEventListener('input', updateBarcode);
+            backgroundColor.addEventListener('input', updateBarcode);
+
+            fontSizeRange.addEventListener('input', function() {
+                document.getElementById('fontSizeValue').textContent = this.value;
+                updateBarcode();
+            });
+
+            downloadBtn.addEventListener('click', downloadBarcode);
+            copyBtn.addEventListener('click', copyBarcode);
+
+            // Use example
+            document.querySelectorAll('.use-example').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    barcodeData.value = input.value;
+                    updateBarcode();
+                });
+            });
+
+            // Initial setup
+            updateFormatHelp();
+            updateBarcode();
+        }
+    </script>
+    <style>
+        .barcode-preview-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #barcodePreview {
+            max-width: 100%;
+            height: auto;
+        }
+        .form-range::-webkit-slider-thumb {
+            background: #0d6efd;
+        }
+        .form-range::-moz-range-thumb {
+            background: #0d6efd;
+        }
+    </style>
+</body>
+</html> 

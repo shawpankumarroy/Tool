@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Zone Converter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Luxon for time zone handling -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Time Zone Converter</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Convert times between different time zones and plan meetings across the world.
+                        </p>
+
+                        <!-- Time Zone Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Time Zone Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="fromTimeZone" class="form-label">From Time Zone</label>
+                                        <select class="form-select" id="fromTimeZone">
+                                            <!-- Time zones will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="toTimeZone" class="form-label">To Time Zone</label>
+                                        <select class="form-select" id="toTimeZone">
+                                            <!-- Time zones will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Time Input -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Time Input</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="dateInput" class="form-label">Date</label>
+                                        <input type="date" class="form-control" id="dateInput">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="timeInput" class="form-label">Time</label>
+                                        <input type="time" class="form-control" id="timeInput">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-outline-secondary" id="useCurrentTime">
+                                        <i class="fas fa-clock"></i> Use Current Time
+                                    </button>
+                                    <button class="btn btn-primary" id="convertTime">
+                                        <i class="fas fa-sync"></i> Convert
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Conversion Result -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Conversion Result</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Original Time</label>
+                                            <input type="text" class="form-control" id="originalTime" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Converted Time</label>
+                                            <input type="text" class="form-control" id="convertedTime" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Time Zone Info</label>
+                                            <input type="text" class="form-control" id="timeZoneInfo" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Time Difference</label>
+                                            <input type="text" class="form-control" id="timeDifference" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meeting Planner -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Meeting Planner</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="meetingTime" class="form-label">Meeting Time</label>
+                                    <input type="datetime-local" class="form-control" id="meetingTime">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="participantTimeZones" class="form-label">Participant Time Zones</label>
+                                    <div class="input-group mb-3">
+                                        <select class="form-select" id="participantTimeZone">
+                                            <!-- Time zones will be populated dynamically -->
+                                        </select>
+                                        <button class="btn btn-outline-primary" id="addParticipant">
+                                            <i class="fas fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Time Zone</th>
+                                                <th>Local Time</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="participantList">
+                                            <!-- Participants will be added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeTimeZoneConverter();
+        });
+
+        function initializeTimeZoneConverter() {
+            // DOM Elements
+            const fromTimeZone = document.getElementById('fromTimeZone');
+            const toTimeZone = document.getElementById('toTimeZone');
+            const dateInput = document.getElementById('dateInput');
+            const timeInput = document.getElementById('timeInput');
+            const useCurrentTime = document.getElementById('useCurrentTime');
+            const convertTime = document.getElementById('convertTime');
+            const originalTime = document.getElementById('originalTime');
+            const convertedTime = document.getElementById('convertedTime');
+            const timeZoneInfo = document.getElementById('timeZoneInfo');
+            const timeDifference = document.getElementById('timeDifference');
+            const meetingTime = document.getElementById('meetingTime');
+            const participantTimeZone = document.getElementById('participantTimeZone');
+            const addParticipant = document.getElementById('addParticipant');
+            const participantList = document.getElementById('participantList');
+
+            // Get all time zones
+            const timeZones = luxon.DateTime.local().setZone('UTC').availableZones;
+
+            // Populate time zone selectors
+            function populateTimeZones() {
+                timeZones.forEach(zone => {
+                    const option = document.createElement('option');
+                    option.value = zone;
+                    option.textContent = zone;
+                    fromTimeZone.appendChild(option.cloneNode(true));
+                    toTimeZone.appendChild(option);
+                    participantTimeZone.appendChild(option.cloneNode(true));
+                });
+
+                // Set default time zones
+                const localZone = luxon.DateTime.local().zoneName;
+                fromTimeZone.value = localZone;
+                toTimeZone.value = 'UTC';
+            }
+
+            // Format date and time
+            function formatDateTime(dateTime) {
+                return dateTime.toFormat('yyyy-MM-dd HH:mm:ss');
+            }
+
+            // Convert time
+            function convert() {
+                const date = dateInput.value;
+                const time = timeInput.value;
+                if (!date || !time) return;
+
+                const fromZone = fromTimeZone.value;
+                const toZone = toTimeZone.value;
+
+                const localDateTime = luxon.DateTime.fromISO(`${date}T${time}`, { zone: fromZone });
+                const convertedDateTime = localDateTime.setZone(toZone);
+
+                originalTime.value = formatDateTime(localDateTime);
+                convertedTime.value = formatDateTime(convertedDateTime);
+
+                const diff = convertedDateTime.offset - localDateTime.offset;
+                timeZoneInfo.value = `${fromZone} → ${toZone}`;
+                timeDifference.value = `${diff > 0 ? '+' : ''}${diff / 60} hours`;
+            }
+
+            // Use current time
+            function useCurrent() {
+                const now = luxon.DateTime.local();
+                dateInput.value = now.toFormat('yyyy-MM-dd');
+                timeInput.value = now.toFormat('HH:mm');
+                convert();
+            }
+
+            // Add participant
+            function addParticipantToList() {
+                const zone = participantTimeZone.value;
+                const meetingDateTime = luxon.DateTime.fromISO(meetingTime.value);
+                if (!meetingDateTime.isValid) return;
+
+                const localDateTime = meetingDateTime.setZone(zone);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${zone}</td>
+                    <td>${formatDateTime(localDateTime)}</td>
+                    <td>
+                        <button class="btn btn-outline-danger btn-sm remove-participant">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                participantList.appendChild(row);
+
+                // Add remove event listener
+                row.querySelector('.remove-participant').addEventListener('click', () => {
+                    row.remove();
+                });
+            }
+
+            // Event Listeners
+            useCurrentTime.addEventListener('click', useCurrent);
+            convertTime.addEventListener('click', convert);
+            addParticipant.addEventListener('click', addParticipantToList);
+            meetingTime.addEventListener('change', () => {
+                participantList.innerHTML = '';
+            });
+
+            // Auto-convert on input change
+            [dateInput, timeInput, fromTimeZone, toTimeZone].forEach(element => {
+                element.addEventListener('change', convert);
+            });
+
+            // Initial setup
+            populateTimeZones();
+            useCurrent();
+        }
+    </script>
+    <style>
+        .table th {
+            background-color: #f8f9fa;
+        }
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+</html> 

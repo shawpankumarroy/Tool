@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Maker - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- gif.js -->
+    <script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">GIF Maker</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Create GIFs from images or videos with customizable settings. Supports frame extraction and animation options.
+                        </p>
+
+                        <!-- File Upload -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Upload Media</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <div class="mb-3">
+                                        <label for="mediaInput" class="form-label">Select images or a video</label>
+                                        <input type="file" class="form-control" id="mediaInput" accept="image/*,video/*" multiple>
+                                    </div>
+                                    <div class="alert alert-info" id="uploadStatus">
+                                        Drag and drop images/video or click to select.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Animation Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Animation Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="frameDelay" class="form-label">Frame Delay (ms)</label>
+                                            <input type="number" class="form-control" id="frameDelay" value="100" min="10" max="1000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="loopCount" class="form-label">Loop Count</label>
+                                            <input type="number" class="form-control" id="loopCount" value="0" min="0">
+                                            <small class="text-muted">0 = infinite loop</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxWidth" class="form-label">Max Width (px)</label>
+                                            <input type="number" class="form-control" id="maxWidth" value="500">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxHeight" class="form-label">Max Height (px)</label>
+                                            <input type="number" class="form-control" id="maxHeight" value="500">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quality" class="form-label">Quality</label>
+                                            <input type="range" class="form-range" id="quality" min="1" max="10" value="7">
+                                            <div class="text-center" id="qualityValue">7</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="frameRate" class="form-label">Frame Rate (fps)</label>
+                                            <input type="number" class="form-control" id="frameRate" value="10" min="1" max="30">
+                                            <small class="text-muted">For video extraction</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Frame Preview -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Frame Preview</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" id="generateButton" disabled>
+                                        <i class="fas fa-play"></i> Generate GIF
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="resetButton">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="framePreview">
+                                    <!-- Frames will be shown here -->
+                                </div>
+                                <div class="alert alert-info" id="previewStatus">
+                                    Upload media to see frame preview.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GIF Preview -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">GIF Preview</h5>
+                                <button class="btn btn-outline-primary" id="downloadButton" disabled>
+                                    <i class="fas fa-download"></i> Download GIF
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <img id="gifPreview" class="img-fluid" style="display: none;">
+                                    <div class="alert alert-info" id="gifStatus">
+                                        Generate a GIF to see the preview.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeGifMaker();
+        });
+
+        function initializeGifMaker() {
+            // DOM Elements
+            const mediaInput = document.getElementById('mediaInput');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const frameDelay = document.getElementById('frameDelay');
+            const loopCount = document.getElementById('loopCount');
+            const maxWidth = document.getElementById('maxWidth');
+            const maxHeight = document.getElementById('maxHeight');
+            const quality = document.getElementById('quality');
+            const qualityValue = document.getElementById('qualityValue');
+            const frameRate = document.getElementById('frameRate');
+            const framePreview = document.getElementById('framePreview');
+            const previewStatus = document.getElementById('previewStatus');
+            const generateButton = document.getElementById('generateButton');
+            const resetButton = document.getElementById('resetButton');
+            const gifPreview = document.getElementById('gifPreview');
+            const gifStatus = document.getElementById('gifStatus');
+            const downloadButton = document.getElementById('downloadButton');
+
+            // Current state
+            let frames = [];
+            let gifBlob = null;
+
+            // Quality slider handler
+            quality.addEventListener('input', () => {
+                qualityValue.textContent = quality.value;
+            });
+
+            // Reset button handler
+            resetButton.addEventListener('click', () => {
+                mediaInput.value = '';
+                frames = [];
+                gifBlob = null;
+                framePreview.innerHTML = '';
+                gifPreview.style.display = 'none';
+                previewStatus.className = 'alert alert-info';
+                previewStatus.textContent = 'Upload media to see frame preview.';
+                gifStatus.className = 'alert alert-info';
+                gifStatus.textContent = 'Generate a GIF to see the preview.';
+                generateButton.disabled = true;
+                downloadButton.disabled = true;
+            });
+
+            // Download button handler
+            downloadButton.addEventListener('click', () => {
+                if (gifBlob) {
+                    const url = URL.createObjectURL(gifBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'animation.gif';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            });
+
+            // Media input handler
+            mediaInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length > 0) {
+                    handleFiles(files);
+                }
+            });
+
+            // Drag and drop handlers
+            const dropZone = document.querySelector('.card-body');
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-primary');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('border-primary');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary');
+                const files = Array.from(e.dataTransfer.files);
+                if (files.length > 0) {
+                    handleFiles(files);
+                }
+            });
+
+            // Generate button handler
+            generateButton.addEventListener('click', () => {
+                generateGif();
+            });
+
+            // Helper functions
+            function handleFiles(files) {
+                frames = [];
+                framePreview.innerHTML = '';
+                previewStatus.className = 'alert alert-info';
+                previewStatus.textContent = 'Processing frames...';
+
+                let videoFile = null;
+                let imageFiles = [];
+
+                // Separate video and image files
+                files.forEach(file => {
+                    if (file.type.startsWith('video/')) {
+                        videoFile = file;
+                    } else if (file.type.startsWith('image/')) {
+                        imageFiles.push(file);
+                    }
+                });
+
+                if (videoFile) {
+                    extractFramesFromVideo(videoFile);
+                } else if (imageFiles.length > 0) {
+                    processImageFiles(imageFiles);
+                } else {
+                    previewStatus.className = 'alert alert-danger';
+                    previewStatus.textContent = 'Please select valid image or video files.';
+                }
+            }
+
+            function processImageFiles(files) {
+                let processedCount = 0;
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+
+                            // Apply max dimensions if specified
+                            if (maxWidth.value && width > maxWidth.value) {
+                                height = (height * maxWidth.value) / width;
+                                width = maxWidth.value;
+                            }
+                            if (maxHeight.value && height > maxHeight.value) {
+                                width = (width * maxHeight.value) / height;
+                                height = maxHeight.value;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            frames.push(canvas);
+                            addFramePreview(canvas, index);
+
+                            processedCount++;
+                            if (processedCount === files.length) {
+                                previewStatus.className = 'alert alert-success';
+                                previewStatus.textContent = `Processed ${frames.length} frames.`;
+                                generateButton.disabled = false;
+                            }
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function extractFramesFromVideo(videoFile) {
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                video.onloadedmetadata = () => {
+                    let width = video.videoWidth;
+                    let height = video.videoHeight;
+
+                    // Apply max dimensions if specified
+                    if (maxWidth.value && width > maxWidth.value) {
+                        height = (height * maxWidth.value) / width;
+                        width = maxWidth.value;
+                    }
+                    if (maxHeight.value && height > maxHeight.value) {
+                        width = (width * maxHeight.value) / height;
+                        height = maxHeight.value;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    video.oncanplay = () => {
+                        const duration = video.duration;
+                        const frameCount = Math.ceil(duration * frameRate.value);
+                        const frameInterval = 1000 / frameRate.value;
+
+                        let currentTime = 0;
+                        let frameIndex = 0;
+
+                        function captureFrame() {
+                            video.currentTime = currentTime;
+                            video.onseeked = () => {
+                                ctx.drawImage(video, 0, 0, width, height);
+                                const frameCanvas = document.createElement('canvas');
+                                frameCanvas.width = width;
+                                frameCanvas.height = height;
+                                frameCanvas.getContext('2d').drawImage(canvas, 0, 0);
+                                frames.push(frameCanvas);
+                                addFramePreview(frameCanvas, frameIndex);
+
+                                frameIndex++;
+                                currentTime += frameInterval / 1000;
+
+                                if (currentTime < duration) {
+                                    captureFrame();
+                                } else {
+                                    previewStatus.className = 'alert alert-success';
+                                    previewStatus.textContent = `Extracted ${frames.length} frames from video.`;
+                                    generateButton.disabled = false;
+                                }
+                            };
+                        }
+
+                        captureFrame();
+                    };
+                };
+
+                video.src = URL.createObjectURL(videoFile);
+            }
+
+            function addFramePreview(canvas, index) {
+                const col = document.createElement('div');
+                col.className = 'col-md-2 mb-3';
+                col.innerHTML = `
+                    <div class="card">
+                        <div class="card-body p-2">
+                            <img src="${canvas.toDataURL()}" class="img-fluid">
+                            <small class="text-muted">Frame ${index + 1}</small>
+                        </div>
+                    </div>
+                `;
+                framePreview.appendChild(col);
+            }
+
+            function generateGif() {
+                if (frames.length === 0) return;
+
+                gifStatus.className = 'alert alert-info';
+                gifStatus.textContent = 'Generating GIF...';
+                downloadButton.disabled = true;
+
+                const gif = new GIF({
+                    workers: 2,
+                    quality: parseInt(quality.value),
+                    width: frames[0].width,
+                    height: frames[0].height,
+                    repeat: parseInt(loopCount.value)
+                });
+
+                frames.forEach(frame => {
+                    gif.addFrame(frame, { delay: parseInt(frameDelay.value) });
+                });
+
+                gif.on('finished', (blob) => {
+                    gifBlob = blob;
+                    gifPreview.src = URL.createObjectURL(blob);
+                    gifPreview.style.display = 'block';
+                    gifStatus.className = 'alert alert-success';
+                    gifStatus.textContent = 'GIF generated successfully!';
+                    downloadButton.disabled = false;
+                });
+
+                gif.render();
+            }
+        }
+    </script>
+    <style>
+        .preview-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+        }
+        .preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .card-body {
+            transition: border-color 0.3s ease;
+        }
+        .border-primary {
+            border: 2px dashed #0d6efd !important;
+        }
+        #framePreview .card {
+            height: 100%;
+        }
+        #framePreview img {
+            max-height: 100px;
+            object-fit: contain;
+        }
+    </style>
+</body>
+</html> 

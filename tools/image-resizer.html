@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Image Resizer</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Resize your images with customizable options while maintaining aspect ratio.
+                        </p>
+
+                        <!-- File Upload -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Upload Image</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="text-center">
+                                        <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                        <p>Drag and drop your image here or click to browse</p>
+                                        <input type="file" id="fileInput" accept="image/*" class="d-none">
+                                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                            <i class="fas fa-folder-open"></i> Choose File
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mt-3" id="uploadStatus">
+                                    No image selected
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resize Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Resize Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="resizeType" class="form-label">Resize Type</label>
+                                            <select class="form-select" id="resizeType">
+                                                <option value="percentage">Percentage</option>
+                                                <option value="dimensions">Dimensions</option>
+                                                <option value="maxDimensions">Maximum Dimensions</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="aspectRatio" class="form-label">Aspect Ratio</label>
+                                            <select class="form-select" id="aspectRatio">
+                                                <option value="maintain">Maintain Original</option>
+                                                <option value="custom">Custom</option>
+                                                <option value="square">Square (1:1)</option>
+                                                <option value="16:9">Widescreen (16:9)</option>
+                                                <option value="4:3">Standard (4:3)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Percentage Options -->
+                                <div class="row" id="percentageOptions">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="percentage" class="form-label">Percentage</label>
+                                            <input type="range" class="form-range" id="percentage" min="1" max="200" value="100">
+                                            <div class="d-flex justify-content-between">
+                                                <span>1%</span>
+                                                <span id="percentageValue">100%</span>
+                                                <span>200%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dimensions Options -->
+                                <div class="row" id="dimensionsOptions" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="width" class="form-label">Width (px)</label>
+                                            <input type="number" class="form-control" id="width" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="height" class="form-label">Height (px)</label>
+                                            <input type="number" class="form-control" id="height" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Max Dimensions Options -->
+                                <div class="row" id="maxDimensionsOptions" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxWidth" class="form-label">Maximum Width (px)</label>
+                                            <input type="number" class="form-control" id="maxWidth" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxHeight" class="form-label">Maximum Height (px)</label>
+                                            <input type="number" class="form-control" id="maxHeight" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Custom Aspect Ratio -->
+                                <div class="row" id="customAspectRatio" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="aspectWidth" class="form-label">Aspect Width</label>
+                                            <input type="number" class="form-control" id="aspectWidth" min="1" value="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="aspectHeight" class="form-label">Aspect Height</label>
+                                            <input type="number" class="form-control" id="aspectHeight" min="1" value="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quality" class="form-label">Quality</label>
+                                            <input type="range" class="form-range" id="quality" min="1" max="100" value="90">
+                                            <div class="d-flex justify-content-between">
+                                                <span>1%</span>
+                                                <span id="qualityValue">90%</span>
+                                                <span>100%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="format" class="form-label">Output Format</label>
+                                            <select class="form-select" id="format">
+                                                <option value="original">Original</option>
+                                                <option value="jpeg">JPEG</option>
+                                                <option value="png">PNG</option>
+                                                <option value="webp">WebP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Preview</h5>
+                                <button class="btn btn-outline-primary" id="downloadButton" disabled>
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-center mb-3">Original</h6>
+                                        <div class="preview-container">
+                                            <img id="originalPreview" class="img-fluid" style="display: none;">
+                                            <div class="alert alert-info" id="originalStatus">
+                                                No image selected
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-center mb-3">Resized</h6>
+                                        <div class="preview-container">
+                                            <img id="resizedPreview" class="img-fluid" style="display: none;">
+                                            <div class="alert alert-info" id="resizedStatus">
+                                                Resize image to see preview
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeImageResizer();
+        });
+
+        function initializeImageResizer() {
+            // DOM Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const resizeType = document.getElementById('resizeType');
+            const aspectRatio = document.getElementById('aspectRatio');
+            const percentageOptions = document.getElementById('percentageOptions');
+            const dimensionsOptions = document.getElementById('dimensionsOptions');
+            const maxDimensionsOptions = document.getElementById('maxDimensionsOptions');
+            const customAspectRatio = document.getElementById('customAspectRatio');
+            const percentage = document.getElementById('percentage');
+            const percentageValue = document.getElementById('percentageValue');
+            const width = document.getElementById('width');
+            const height = document.getElementById('height');
+            const maxWidth = document.getElementById('maxWidth');
+            const maxHeight = document.getElementById('maxHeight');
+            const aspectWidth = document.getElementById('aspectWidth');
+            const aspectHeight = document.getElementById('aspectHeight');
+            const quality = document.getElementById('quality');
+            const qualityValue = document.getElementById('qualityValue');
+            const format = document.getElementById('format');
+            const originalPreview = document.getElementById('originalPreview');
+            const originalStatus = document.getElementById('originalStatus');
+            const resizedPreview = document.getElementById('resizedPreview');
+            const resizedStatus = document.getElementById('resizedStatus');
+            const downloadButton = document.getElementById('downloadButton');
+
+            // Current state
+            let originalImage = null;
+            let resizedImage = null;
+            let originalWidth = 0;
+            let originalHeight = 0;
+
+            // Event Listeners
+            fileInput.addEventListener('change', handleFileSelect);
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('drop', handleDrop);
+            resizeType.addEventListener('change', updateResizeOptions);
+            aspectRatio.addEventListener('change', updateAspectRatio);
+            percentage.addEventListener('input', updatePercentage);
+            width.addEventListener('input', updateDimensions);
+            height.addEventListener('input', updateDimensions);
+            maxWidth.addEventListener('input', updateMaxDimensions);
+            maxHeight.addEventListener('input', updateMaxDimensions);
+            aspectWidth.addEventListener('input', updateCustomAspectRatio);
+            aspectHeight.addEventListener('input', updateCustomAspectRatio);
+            quality.addEventListener('input', updateQuality);
+            format.addEventListener('change', updateFormat);
+            downloadButton.addEventListener('click', downloadImage);
+
+            // Functions
+            function handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    loadImage(file);
+                }
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.add('dragover');
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    loadImage(file);
+                }
+            }
+
+            function loadImage(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    originalImage = new Image();
+                    originalImage.onload = function() {
+                        originalWidth = this.width;
+                        originalHeight = this.height;
+                        
+                        originalPreview.src = e.target.result;
+                        originalPreview.style.display = 'block';
+                        originalStatus.style.display = 'none';
+                        
+                        uploadStatus.className = 'alert alert-success mt-3';
+                        uploadStatus.textContent = `Image loaded: ${file.name} (${originalWidth}x${originalHeight})`;
+                        
+                        // Initialize dimensions
+                        width.value = originalWidth;
+                        height.value = originalHeight;
+                        maxWidth.value = originalWidth;
+                        maxHeight.value = originalHeight;
+                        
+                        // Generate initial resized image
+                        generateResizedImage();
+                    };
+                    originalImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function updateResizeOptions() {
+                percentageOptions.style.display = resizeType.value === 'percentage' ? 'block' : 'none';
+                dimensionsOptions.style.display = resizeType.value === 'dimensions' ? 'block' : 'none';
+                maxDimensionsOptions.style.display = resizeType.value === 'maxDimensions' ? 'block' : 'none';
+                generateResizedImage();
+            }
+
+            function updateAspectRatio() {
+                customAspectRatio.style.display = aspectRatio.value === 'custom' ? 'block' : 'none';
+                generateResizedImage();
+            }
+
+            function updatePercentage() {
+                percentageValue.textContent = `${percentage.value}%`;
+                generateResizedImage();
+            }
+
+            function updateDimensions() {
+                if (aspectRatio.value === 'maintain') {
+                    const ratio = originalWidth / originalHeight;
+                    if (this === width) {
+                        height.value = Math.round(width.value / ratio);
+                    } else {
+                        width.value = Math.round(height.value * ratio);
+                    }
+                }
+                generateResizedImage();
+            }
+
+            function updateMaxDimensions() {
+                generateResizedImage();
+            }
+
+            function updateCustomAspectRatio() {
+                generateResizedImage();
+            }
+
+            function updateQuality() {
+                qualityValue.textContent = `${quality.value}%`;
+                generateResizedImage();
+            }
+
+            function updateFormat() {
+                generateResizedImage();
+            }
+
+            function generateResizedImage() {
+                if (!originalImage) return;
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                let newWidth, newHeight;
+
+                // Calculate new dimensions based on resize type
+                switch (resizeType.value) {
+                    case 'percentage':
+                        newWidth = originalWidth * (percentage.value / 100);
+                        newHeight = originalHeight * (percentage.value / 100);
+                        break;
+                    case 'dimensions':
+                        newWidth = parseInt(width.value);
+                        newHeight = parseInt(height.value);
+                        break;
+                    case 'maxDimensions':
+                        const maxW = parseInt(maxWidth.value);
+                        const maxH = parseInt(maxHeight.value);
+                        const ratio = originalWidth / originalHeight;
+                        
+                        if (maxW / maxH > ratio) {
+                            newWidth = maxH * ratio;
+                            newHeight = maxH;
+                        } else {
+                            newWidth = maxW;
+                            newHeight = maxW / ratio;
+                        }
+                        break;
+                }
+
+                // Apply aspect ratio
+                if (aspectRatio.value !== 'maintain') {
+                    let targetRatio;
+                    switch (aspectRatio.value) {
+                        case 'custom':
+                            targetRatio = aspectWidth.value / aspectHeight.value;
+                            break;
+                        case 'square':
+                            targetRatio = 1;
+                            break;
+                        case '16:9':
+                            targetRatio = 16 / 9;
+                            break;
+                        case '4:3':
+                            targetRatio = 4 / 3;
+                            break;
+                    }
+
+                    if (newWidth / newHeight > targetRatio) {
+                        newWidth = newHeight * targetRatio;
+                    } else {
+                        newHeight = newWidth / targetRatio;
+                    }
+                }
+
+                // Set canvas dimensions
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+
+                // Draw image
+                ctx.drawImage(originalImage, 0, 0, newWidth, newHeight);
+
+                // Convert to selected format
+                let mimeType = 'image/jpeg';
+                switch (format.value) {
+                    case 'png':
+                        mimeType = 'image/png';
+                        break;
+                    case 'webp':
+                        mimeType = 'image/webp';
+                        break;
+                    case 'original':
+                        mimeType = originalImage.src.split(';')[0].split(':')[1];
+                        break;
+                }
+
+                // Update preview
+                resizedImage = canvas.toDataURL(mimeType, quality.value / 100);
+                resizedPreview.src = resizedImage;
+                resizedPreview.style.display = 'block';
+                resizedStatus.style.display = 'none';
+
+                // Update status
+                resizedStatus.className = 'alert alert-success';
+                resizedStatus.textContent = `Resized to ${Math.round(newWidth)}x${Math.round(newHeight)}`;
+                resizedStatus.style.display = 'block';
+
+                // Enable download button
+                downloadButton.disabled = false;
+            }
+
+            function downloadImage() {
+                if (!resizedImage) return;
+
+                const a = document.createElement('a');
+                a.href = resizedImage;
+                a.download = `resized_image.${format.value}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+    </script>
+    <style>
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 0.25rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        .preview-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+        }
+        .preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+    </style>
+</body>
+</html> 

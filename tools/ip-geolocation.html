@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Geolocation Finder - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">IP Geolocation Finder</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Find the geographical location and details of any IP address.
+                        </p>
+
+                        <!-- IP Input -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Enter IP Address</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="ipAddress" placeholder="Enter IP address or domain" aria-label="IP address">
+                                    <button class="btn btn-primary" type="button" id="lookupButton">
+                                        <i class="fas fa-search"></i> Lookup
+                                    </button>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Enter an IP address or domain name to find its location and details.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Map Section -->
+                        <div class="card mb-4" id="mapSection" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Location Map</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="map" style="height: 400px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Location Details -->
+                        <div class="card mb-4" id="detailsSection" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Location Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">IP Address</label>
+                                            <input type="text" class="form-control" id="ipAddressDisplay" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Country</label>
+                                            <input type="text" class="form-control" id="country" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Region</label>
+                                            <input type="text" class="form-control" id="region" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">City</label>
+                                            <input type="text" class="form-control" id="city" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Postal Code</label>
+                                            <input type="text" class="form-control" id="postalCode" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Timezone</label>
+                                            <input type="text" class="form-control" id="timezone" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">ISP</label>
+                                            <input type="text" class="form-control" id="isp" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Organization</label>
+                                            <input type="text" class="form-control" id="organization" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Details -->
+                        <div class="card mb-4" id="networkSection" style="display: none;">
+                            <div class="card-header">
+                                <h5 class="mb-0">Network Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">AS Number</label>
+                                            <input type="text" class="form-control" id="asNumber" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">AS Name</label>
+                                            <input type="text" class="form-control" id="asName" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Hostname</label>
+                                            <input type="text" class="form-control" id="hostname" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Connection Type</label>
+                                            <input type="text" class="form-control" id="connectionType" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Search History -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Search History</h5>
+                                <button class="btn btn-outline-danger btn-sm" id="clearHistory">
+                                    <i class="fas fa-trash"></i> Clear History
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table" id="searchHistory">
+                                        <thead>
+                                            <tr>
+                                                <th>IP Address</th>
+                                                <th>Location</th>
+                                                <th>Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Search history will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeIpGeolocation();
+        });
+
+        function initializeIpGeolocation() {
+            // DOM Elements
+            const ipAddress = document.getElementById('ipAddress');
+            const lookupButton = document.getElementById('lookupButton');
+            const mapSection = document.getElementById('mapSection');
+            const detailsSection = document.getElementById('detailsSection');
+            const networkSection = document.getElementById('networkSection');
+            const searchHistory = document.getElementById('searchHistory');
+            const clearHistory = document.getElementById('clearHistory');
+
+            // Map variables
+            let map;
+            let marker;
+
+            // Load search history from localStorage
+            let searches = JSON.parse(localStorage.getItem('ipSearches')) || [];
+
+            // Show status message
+            function showStatus(message, type = 'info') {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-dismissible fade show`;
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.card-body').insertBefore(alert, mapSection);
+                setTimeout(() => alert.remove(), 5000);
+            }
+
+            // Validate IP address
+            function isValidIpAddress(ip) {
+                const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+                const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+                return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+            }
+
+            // Initialize map
+            function initMap(lat, lng) {
+                if (map) {
+                    map.remove();
+                }
+
+                map = L.map('map').setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                if (marker) {
+                    marker.remove();
+                }
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+
+            // Update search history
+            function updateSearchHistory() {
+                const tbody = searchHistory.querySelector('tbody');
+                tbody.innerHTML = '';
+
+                searches.forEach((search, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${search.ip}</td>
+                        <td>${search.city}, ${search.country}</td>
+                        <td>${new Date(search.date).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary view-search" data-index="${index}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-search" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Add event listeners to new buttons
+                document.querySelectorAll('.view-search').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const search = searches[button.dataset.index];
+                        displayResults(search);
+                    });
+                });
+
+                document.querySelectorAll('.delete-search').forEach(button => {
+                    button.addEventListener('click', () => {
+                        searches.splice(button.dataset.index, 1);
+                        localStorage.setItem('ipSearches', JSON.stringify(searches));
+                        updateSearchHistory();
+                        showStatus('Search deleted!', 'success');
+                    });
+                });
+            }
+
+            // Display results
+            function displayResults(data) {
+                // Update map
+                initMap(data.latitude, data.longitude);
+
+                // Update location details
+                document.getElementById('ipAddressDisplay').value = data.ip;
+                document.getElementById('country').value = data.country;
+                document.getElementById('region').value = data.region;
+                document.getElementById('city').value = data.city;
+                document.getElementById('postalCode').value = data.postal;
+                document.getElementById('timezone').value = data.timezone;
+                document.getElementById('isp').value = data.isp;
+                document.getElementById('organization').value = data.org;
+
+                // Update network details
+                document.getElementById('asNumber').value = data.as;
+                document.getElementById('asName').value = data.asname;
+                document.getElementById('hostname').value = data.hostname || 'N/A';
+                document.getElementById('connectionType').value = data.connectionType || 'N/A';
+
+                // Show sections
+                mapSection.style.display = 'block';
+                detailsSection.style.display = 'block';
+                networkSection.style.display = 'block';
+            }
+
+            // Lookup IP address
+            async function lookupIp() {
+                const ip = ipAddress.value.trim();
+                
+                if (!ip) {
+                    showStatus('Please enter an IP address', 'warning');
+                    return;
+                }
+
+                try {
+                    showStatus('Looking up IP address...', 'info');
+
+                    // In a real implementation, you would need to use an IP geolocation API
+                    // This is a placeholder for demonstration purposes
+                    const response = await fetch(`https://api.example.com/ip/${ip}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Add to search history
+                        searches.unshift({
+                            ...data,
+                            date: new Date().toISOString()
+                        });
+                        localStorage.setItem('ipSearches', JSON.stringify(searches));
+
+                        // Display results
+                        displayResults(data);
+                        updateSearchHistory();
+
+                        showStatus('IP lookup successful!', 'success');
+                    } else {
+                        throw new Error(data.message || 'Failed to lookup IP address');
+                    }
+                } catch (error) {
+                    showStatus(`Error: ${error.message}`, 'danger');
+                }
+            }
+
+            // Event listeners
+            lookupButton.addEventListener('click', lookupIp);
+            clearHistory.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all history?')) {
+                    searches = [];
+                    localStorage.removeItem('ipSearches');
+                    updateSearchHistory();
+                    showStatus('History cleared!', 'success');
+                }
+            });
+
+            // Handle Enter key in IP input
+            ipAddress.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    lookupIp();
+                }
+            });
+
+            // Initial setup
+            updateSearchHistory();
+        }
+    </script>
+    <style>
+        #map {
+            border-radius: 0.25rem;
+        }
+        .form-control:read-only {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+</html> 

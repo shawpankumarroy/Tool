@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Spectrum Color Picker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css">
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Color Picker</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Pick, convert, and analyze colors with various formats and utilities.
+                        </p>
+
+                        <!-- Color Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Color Picker</label>
+                                            <input type="text" class="form-control" id="colorPicker">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Color Preview</label>
+                                            <div id="colorPreview" class="rounded" style="height: 100px; width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Color Formats</label>
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">HEX</span>
+                                                <input type="text" class="form-control" id="hexValue" readonly>
+                                                <button class="btn btn-outline-primary copy-btn" data-target="hexValue">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">RGB</span>
+                                                <input type="text" class="form-control" id="rgbValue" readonly>
+                                                <button class="btn btn-outline-primary copy-btn" data-target="rgbValue">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">HSL</span>
+                                                <input type="text" class="form-control" id="hslValue" readonly>
+                                                <button class="btn btn-outline-primary copy-btn" data-target="hslValue">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">CMYK</span>
+                                                <input type="text" class="form-control" id="cmykValue" readonly>
+                                                <button class="btn btn-outline-primary copy-btn" data-target="cmykValue">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Analysis -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Brightness</label>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="brightnessBar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            <small class="text-muted" id="brightnessValue">0%</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Saturation</label>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="saturationBar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            <small class="text-muted" id="saturationValue">0%</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Contrast Ratio</label>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="contrastBar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            <small class="text-muted" id="contrastValue">0:1</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Color Temperature</label>
+                                            <div class="progress">
+                                                <div class="progress-bar" id="temperatureBar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            <small class="text-muted" id="temperatureValue">Neutral</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Schemes -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Schemes</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h6>Monochromatic</h6>
+                                        <div class="color-scheme" id="monochromaticScheme"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>Analogous</h6>
+                                        <div class="color-scheme" id="analogousScheme"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>Complementary</h6>
+                                        <div class="color-scheme" id="complementaryScheme"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <h6>Triadic</h6>
+                                        <div class="color-scheme" id="triadicScheme"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>Split Complementary</h6>
+                                        <div class="color-scheme" id="splitComplementaryScheme"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>Tetradic</h6>
+                                        <div class="color-scheme" id="tetradicScheme"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Blindness Simulator -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Color Blindness Simulator</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Normal Vision</label>
+                                            <div class="color-blindness-preview" id="normalVision"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Protanopia</label>
+                                            <div class="color-blindness-preview" id="protanopia"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Deuteranopia</label>
+                                            <div class="color-blindness-preview" id="deuteranopia"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tritanopia</label>
+                                            <div class="color-blindness-preview" id="tritanopia"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Colors -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Common Colors</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Primary Colors</label>
+                                            <div class="common-colors" id="primaryColors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Secondary Colors</label>
+                                            <div class="common-colors" id="secondaryColors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Web Safe Colors</label>
+                                            <div class="common-colors" id="webSafeColors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Material Colors</label>
+                                            <div class="common-colors" id="materialColors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Spectrum Color Picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js"></script>
+    <!-- TinyColor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeColorPicker();
+        });
+
+        function initializeColorPicker() {
+            // Initialize Spectrum color picker
+            $("#colorPicker").spectrum({
+                type: "component",
+                showInput: true,
+                showInitial: true,
+                showAlpha: false,
+                showPalette: true,
+                showSelectionPalette: true,
+                preferredFormat: "hex",
+                palette: [
+                    ["#000000", "#444444", "#666666", "#999999", "#cccccc", "#eeeeee", "#f3f3f3", "#ffffff"],
+                    ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+                    ["#f4cccc", "#fce5cd", "#fff2cc", "#d9ead3", "#d0e0e3", "#cfe2f3", "#d9d2e9", "#ead1dc"],
+                    ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#9fc5e8", "#b4a7d6", "#d5a6bd"],
+                    ["#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6fa8dc", "#8e7cc3", "#c27ba0"],
+                    ["#c00", "#e69138", "#f1c232", "#6aa84f", "#45818e", "#3d85c6", "#674ea7", "#a64d79"],
+                    ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                    ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                ],
+                change: function(color) {
+                    updateColor(color);
+                }
+            });
+
+            // Update color information
+            function updateColor(color) {
+                if (!color) return;
+
+                // Update color preview
+                $("#colorPreview").css("background-color", color.toHexString());
+
+                // Update color values
+                $("#hexValue").val(color.toHexString());
+                $("#rgbValue").val(color.toRgbString());
+                $("#hslValue").val(color.toHslString());
+                $("#cmykValue").val(rgbToCmyk(color.toRgb()));
+
+                // Update color analysis
+                updateColorAnalysis(color);
+                updateColorSchemes(color);
+                updateColorBlindness(color);
+            }
+
+            // Convert RGB to CMYK
+            function rgbToCmyk(rgb) {
+                const r = rgb.r / 255;
+                const g = rgb.g / 255;
+                const b = rgb.b / 255;
+
+                const k = 1 - Math.max(r, g, b);
+                const c = (1 - r - k) / (1 - k) || 0;
+                const m = (1 - g - k) / (1 - k) || 0;
+                const y = (1 - b - k) / (1 - k) || 0;
+
+                return `cmyk(${Math.round(c * 100)}%, ${Math.round(m * 100)}%, ${Math.round(y * 100)}%, ${Math.round(k * 100)}%)`;
+            }
+
+            // Update color analysis
+            function updateColorAnalysis(color) {
+                const brightness = Math.round(color.getBrightness() * 100);
+                const saturation = Math.round(color.getSaturation() * 100);
+                const contrast = Math.round(color.getLuminance() * 100);
+                const temperature = getColorTemperature(color);
+
+                $("#brightnessBar").css("width", brightness + "%");
+                $("#brightnessValue").text(brightness + "%");
+                $("#saturationBar").css("width", saturation + "%");
+                $("#saturationValue").text(saturation + "%");
+                $("#contrastBar").css("width", contrast + "%");
+                $("#contrastValue").text(contrast + ":1");
+                $("#temperatureBar").css("width", "100%");
+                $("#temperatureValue").text(temperature);
+            }
+
+            // Get color temperature
+            function getColorTemperature(color) {
+                const rgb = color.toRgb();
+                const r = rgb.r;
+                const b = rgb.b;
+
+                if (r > b) {
+                    return "Warm";
+                } else if (b > r) {
+                    return "Cool";
+                } else {
+                    return "Neutral";
+                }
+            }
+
+            // Update color schemes
+            function updateColorSchemes(color) {
+                const monochromatic = tinycolor(color.toHexString()).monochromatic();
+                const analogous = tinycolor(color.toHexString()).analogous();
+                const complementary = tinycolor(color.toHexString()).complement();
+                const triadic = tinycolor(color.toHexString()).triad();
+                const splitComplementary = tinycolor(color.toHexString()).splitcomplement();
+                const tetradic = tinycolor(color.toHexString()).tetrad();
+
+                updateSchemePreview("monochromaticScheme", monochromatic);
+                updateSchemePreview("analogousScheme", analogous);
+                updateSchemePreview("complementaryScheme", [color, complementary]);
+                updateSchemePreview("triadicScheme", triadic);
+                updateSchemePreview("splitComplementaryScheme", splitComplementary);
+                updateSchemePreview("tetradicScheme", tetradic);
+            }
+
+            // Update scheme preview
+            function updateSchemePreview(elementId, colors) {
+                const element = $("#" + elementId);
+                element.empty();
+
+                colors.forEach(color => {
+                    const colorDiv = $("<div>")
+                        .css({
+                            "background-color": color.toHexString(),
+                            "height": "50px",
+                            "width": "100%",
+                            "margin-bottom": "5px",
+                            "cursor": "pointer"
+                        })
+                        .click(function() {
+                            $("#colorPicker").spectrum("set", color);
+                        });
+                    element.append(colorDiv);
+                });
+            }
+
+            // Update color blindness simulation
+            function updateColorBlindness(color) {
+                const normal = color.toHexString();
+                const protanopia = simulateColorBlindness(color, "protanopia");
+                const deuteranopia = simulateColorBlindness(color, "deuteranopia");
+                const tritanopia = simulateColorBlindness(color, "tritanopia");
+
+                $("#normalVision").css("background-color", normal);
+                $("#protanopia").css("background-color", protanopia);
+                $("#deuteranopia").css("background-color", deuteranopia);
+                $("#tritanopia").css("background-color", tritanopia);
+            }
+
+            // Simulate color blindness
+            function simulateColorBlindness(color, type) {
+                const rgb = color.toRgb();
+                let r = rgb.r;
+                let g = rgb.g;
+                let b = rgb.b;
+
+                switch (type) {
+                    case "protanopia":
+                        r = 0.567 * r + 0.433 * g;
+                        g = 0.558 * r + 0.442 * g;
+                        b = b;
+                        break;
+                    case "deuteranopia":
+                        r = 0.625 * r + 0.375 * g;
+                        g = 0.7 * r + 0.3 * g;
+                        b = b;
+                        break;
+                    case "tritanopia":
+                        r = r;
+                        g = g;
+                        b = 0.95 * r + 0.05 * g;
+                        break;
+                }
+
+                return tinycolor({ r, g, b }).toHexString();
+            }
+
+            // Initialize common colors
+            function initializeCommonColors() {
+                const primaryColors = ["#ff0000", "#00ff00", "#0000ff"];
+                const secondaryColors = ["#ffff00", "#00ffff", "#ff00ff"];
+                const webSafeColors = ["#000000", "#333333", "#666666", "#999999", "#cccccc", "#ffffff"];
+                const materialColors = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3"];
+
+                updateCommonColors("primaryColors", primaryColors);
+                updateCommonColors("secondaryColors", secondaryColors);
+                updateCommonColors("webSafeColors", webSafeColors);
+                updateCommonColors("materialColors", materialColors);
+            }
+
+            // Update common colors
+            function updateCommonColors(elementId, colors) {
+                const element = $("#" + elementId);
+                element.empty();
+
+                colors.forEach(color => {
+                    const colorDiv = $("<div>")
+                        .css({
+                            "background-color": color,
+                            "height": "30px",
+                            "width": "100%",
+                            "margin-bottom": "5px",
+                            "cursor": "pointer"
+                        })
+                        .click(function() {
+                            $("#colorPicker").spectrum("set", color);
+                        });
+                    element.append(colorDiv);
+                });
+            }
+
+            // Copy button functionality
+            $(".copy-btn").click(function() {
+                const target = $(this).data("target");
+                const text = $("#" + target).val();
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = $(this).html();
+                    $(this).html('<i class="fas fa-check"></i>');
+                    setTimeout(() => {
+                        $(this).html(originalText);
+                    }, 1000);
+                });
+            });
+
+            // Initialize common colors
+            initializeCommonColors();
+        }
+    </script>
+    <style>
+        .color-scheme div {
+            height: 50px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .color-blindness-preview {
+            height: 100px;
+            width: 100%;
+            border-radius: 5px;
+        }
+        .common-colors div {
+            height: 30px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .progress {
+            height: 20px;
+        }
+    </style>
+</body>
+</html> 

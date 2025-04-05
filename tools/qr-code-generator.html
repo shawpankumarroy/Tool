@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">QR Code Generator</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Generate QR codes with customizable options for various content types.
+                        </p>
+
+                        <!-- Content Type -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Content Type</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="contentType" class="form-label">Select Content Type</label>
+                                    <select class="form-select" id="contentType">
+                                        <option value="url">URL</option>
+                                        <option value="text">Text</option>
+                                        <option value="email">Email</option>
+                                        <option value="phone">Phone Number</option>
+                                        <option value="wifi">WiFi Network</option>
+                                        <option value="vcard">Contact (vCard)</option>
+                                        <option value="sms">SMS</option>
+                                        <option value="calendar">Calendar Event</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Input -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Content</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- URL Input -->
+                                <div class="mb-3" id="urlInput">
+                                    <label for="url" class="form-label">URL</label>
+                                    <input type="url" class="form-control" id="url" placeholder="https://example.com">
+                                </div>
+                                <!-- Text Input -->
+                                <div class="mb-3" id="textInput" style="display: none;">
+                                    <label for="text" class="form-label">Text</label>
+                                    <textarea class="form-control" id="text" rows="3" placeholder="Enter your text here"></textarea>
+                                </div>
+                                <!-- Email Input -->
+                                <div class="mb-3" id="emailInput" style="display: none;">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" placeholder="example@domain.com">
+                                </div>
+                                <!-- Phone Input -->
+                                <div class="mb-3" id="phoneInput" style="display: none;">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
+                                </div>
+                                <!-- WiFi Input -->
+                                <div id="wifiInput" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="wifiSSID" class="form-label">Network Name (SSID)</label>
+                                        <input type="text" class="form-control" id="wifiSSID" placeholder="MyWiFi">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="wifiPassword" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="wifiPassword" placeholder="Password">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="wifiSecurity" class="form-label">Security Type</label>
+                                        <select class="form-select" id="wifiSecurity">
+                                            <option value="WPA">WPA/WPA2</option>
+                                            <option value="WEP">WEP</option>
+                                            <option value="nopass">No Password</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- vCard Input -->
+                                <div id="vcardInput" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="vcardName" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="vcardName" placeholder="John Doe">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="vcardPhone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="vcardPhone" placeholder="+1234567890">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="vcardEmail" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="vcardEmail" placeholder="john@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="vcardWebsite" class="form-label">Website</label>
+                                        <input type="url" class="form-control" id="vcardWebsite" placeholder="https://example.com">
+                                    </div>
+                                </div>
+                                <!-- SMS Input -->
+                                <div class="mb-3" id="smsInput" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="smsNumber" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="smsNumber" placeholder="+1234567890">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="smsMessage" class="form-label">Message</label>
+                                        <textarea class="form-control" id="smsMessage" rows="3" placeholder="Enter your message"></textarea>
+                                    </div>
+                                </div>
+                                <!-- Calendar Input -->
+                                <div id="calendarInput" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="eventTitle" class="form-label">Event Title</label>
+                                        <input type="text" class="form-control" id="eventTitle" placeholder="Meeting with John">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eventStart" class="form-label">Start Date & Time</label>
+                                        <input type="datetime-local" class="form-control" id="eventStart">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eventEnd" class="form-label">End Date & Time</label>
+                                        <input type="datetime-local" class="form-control" id="eventEnd">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eventLocation" class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="eventLocation" placeholder="Conference Room A">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eventDescription" class="form-label">Description</label>
+                                        <textarea class="form-control" id="eventDescription" rows="3" placeholder="Event details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customization Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Customization</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="size" class="form-label">Size (px)</label>
+                                            <input type="range" class="form-range" id="size" min="100" max="500" value="200">
+                                            <div class="d-flex justify-content-between">
+                                                <span>100px</span>
+                                                <span id="sizeValue">200px</span>
+                                                <span>500px</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="errorCorrection" class="form-label">Error Correction</label>
+                                            <select class="form-select" id="errorCorrection">
+                                                <option value="L">Low (7%)</option>
+                                                <option value="M">Medium (15%)</option>
+                                                <option value="Q">Quartile (25%)</option>
+                                                <option value="H">High (30%)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="foregroundColor" class="form-label">Foreground Color</label>
+                                            <input type="color" class="form-control form-control-color" id="foregroundColor" value="#000000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="backgroundColor" class="form-label">Background Color</label>
+                                            <input type="color" class="form-control form-control-color" id="backgroundColor" value="#ffffff">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="margin" class="form-label">Margin</label>
+                                            <input type="range" class="form-range" id="margin" min="0" max="4" value="1">
+                                            <div class="d-flex justify-content-between">
+                                                <span>0</span>
+                                                <span id="marginValue">1</span>
+                                                <span>4</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="logo" class="form-label">Logo (Optional)</label>
+                                            <input type="file" class="form-control" id="logo" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Preview</h5>
+                                <div>
+                                    <button class="btn btn-outline-primary" id="downloadPNG" disabled>
+                                        <i class="fas fa-download"></i> PNG
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="downloadSVG" disabled>
+                                        <i class="fas fa-download"></i> SVG
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <div id="qrcode" class="mb-3"></div>
+                                    <div class="alert alert-info" id="previewStatus">
+                                        Enter content and customize options to generate QR code
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeQRCodeGenerator();
+        });
+
+        function initializeQRCodeGenerator() {
+            // DOM Elements
+            const contentType = document.getElementById('contentType');
+            const urlInput = document.getElementById('urlInput');
+            const textInput = document.getElementById('textInput');
+            const emailInput = document.getElementById('emailInput');
+            const phoneInput = document.getElementById('phoneInput');
+            const wifiInput = document.getElementById('wifiInput');
+            const vcardInput = document.getElementById('vcardInput');
+            const smsInput = document.getElementById('smsInput');
+            const calendarInput = document.getElementById('calendarInput');
+            const size = document.getElementById('size');
+            const sizeValue = document.getElementById('sizeValue');
+            const errorCorrection = document.getElementById('errorCorrection');
+            const foregroundColor = document.getElementById('foregroundColor');
+            const backgroundColor = document.getElementById('backgroundColor');
+            const margin = document.getElementById('margin');
+            const marginValue = document.getElementById('marginValue');
+            const logo = document.getElementById('logo');
+            const qrcode = document.getElementById('qrcode');
+            const previewStatus = document.getElementById('previewStatus');
+            const downloadPNG = document.getElementById('downloadPNG');
+            const downloadSVG = document.getElementById('downloadSVG');
+
+            // Current state
+            let currentQRCode = null;
+            let currentContent = '';
+
+            // Event Listeners
+            contentType.addEventListener('change', handleContentTypeChange);
+            size.addEventListener('input', updateSize);
+            margin.addEventListener('input', updateMargin);
+            logo.addEventListener('change', handleLogoChange);
+            downloadPNG.addEventListener('click', downloadAsPNG);
+            downloadSVG.addEventListener('click', downloadAsSVG);
+
+            // Add input event listeners for all content inputs
+            document.querySelectorAll('input, textarea').forEach(input => {
+                input.addEventListener('input', generateQRCode);
+            });
+
+            // Functions
+            function handleContentTypeChange() {
+                // Hide all inputs
+                urlInput.style.display = 'none';
+                textInput.style.display = 'none';
+                emailInput.style.display = 'none';
+                phoneInput.style.display = 'none';
+                wifiInput.style.display = 'none';
+                vcardInput.style.display = 'none';
+                smsInput.style.display = 'none';
+                calendarInput.style.display = 'none';
+
+                // Show selected input
+                switch (contentType.value) {
+                    case 'url':
+                        urlInput.style.display = 'block';
+                        break;
+                    case 'text':
+                        textInput.style.display = 'block';
+                        break;
+                    case 'email':
+                        emailInput.style.display = 'block';
+                        break;
+                    case 'phone':
+                        phoneInput.style.display = 'block';
+                        break;
+                    case 'wifi':
+                        wifiInput.style.display = 'block';
+                        break;
+                    case 'vcard':
+                        vcardInput.style.display = 'block';
+                        break;
+                    case 'sms':
+                        smsInput.style.display = 'block';
+                        break;
+                    case 'calendar':
+                        calendarInput.style.display = 'block';
+                        break;
+                }
+
+                generateQRCode();
+            }
+
+            function updateSize() {
+                sizeValue.textContent = `${size.value}px`;
+                generateQRCode();
+            }
+
+            function updateMargin() {
+                marginValue.textContent = margin.value;
+                generateQRCode();
+            }
+
+            function handleLogoChange(e) {
+                generateQRCode();
+            }
+
+            function getContent() {
+                switch (contentType.value) {
+                    case 'url':
+                        let url = document.getElementById('url').value;
+                        if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                            url = 'https://' + url;
+                        }
+                        return url;
+                    case 'text':
+                        return document.getElementById('text').value;
+                    case 'email':
+                        return `mailto:${document.getElementById('email').value}`;
+                    case 'phone':
+                        return `tel:${document.getElementById('phone').value}`;
+                    case 'wifi':
+                        const ssid = document.getElementById('wifiSSID').value;
+                        const password = document.getElementById('wifiPassword').value;
+                        const security = document.getElementById('wifiSecurity').value;
+                        return `WIFI:T:${security};S:${ssid};P:${password};;`;
+                    case 'vcard':
+                        const name = document.getElementById('vcardName').value;
+                        const phone = document.getElementById('vcardPhone').value;
+                        const email = document.getElementById('vcardEmail').value;
+                        const website = document.getElementById('vcardWebsite').value;
+                        return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nURL:${website}\nEND:VCARD`;
+                    case 'sms':
+                        const number = document.getElementById('smsNumber').value;
+                        const message = document.getElementById('smsMessage').value;
+                        return `SMSTO:${number}:${message}`;
+                    case 'calendar':
+                        const title = document.getElementById('eventTitle').value;
+                        const start = document.getElementById('eventStart').value;
+                        const end = document.getElementById('eventEnd').value;
+                        const location = document.getElementById('eventLocation').value;
+                        const description = document.getElementById('eventDescription').value;
+                        return `BEGIN:VEVENT\nSUMMARY:${title}\nDTSTART:${formatDate(start)}\nDTEND:${formatDate(end)}\nLOCATION:${location}\nDESCRIPTION:${description}\nEND:VEVENT`;
+                    default:
+                        return '';
+                }
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            }
+
+            function generateQRCode() {
+                const content = getContent();
+                if (!content) {
+                    previewStatus.className = 'alert alert-info';
+                    previewStatus.textContent = 'Enter content to generate QR code';
+                    downloadPNG.disabled = true;
+                    downloadSVG.disabled = true;
+                    return;
+                }
+
+                // Clear previous QR code
+                qrcode.innerHTML = '';
+
+                // Generate new QR code
+                QRCode.toCanvas(qrcode, content, {
+                    width: parseInt(size.value),
+                    height: parseInt(size.value),
+                    color: {
+                        dark: foregroundColor.value,
+                        light: backgroundColor.value
+                    },
+                    margin: parseInt(margin.value),
+                    errorCorrectionLevel: errorCorrection.value
+                }, function(error) {
+                    if (error) {
+                        previewStatus.className = 'alert alert-danger';
+                        previewStatus.textContent = 'Error generating QR code: ' + error.message;
+                        downloadPNG.disabled = true;
+                        downloadSVG.disabled = true;
+                        return;
+                    }
+
+                    // Add logo if selected
+                    if (logo.files.length > 0) {
+                        addLogoToQRCode(qrcode.firstChild, logo.files[0]);
+                    }
+
+                    previewStatus.className = 'alert alert-success';
+                    previewStatus.textContent = 'QR code generated successfully';
+                    downloadPNG.disabled = false;
+                    downloadSVG.disabled = false;
+                });
+            }
+
+            function addLogoToQRCode(canvas, logoFile) {
+                const ctx = canvas.getContext('2d');
+                const logo = new Image();
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    logo.onload = function() {
+                        // Calculate logo size (20% of QR code size)
+                        const logoSize = canvas.width * 0.2;
+                        const x = (canvas.width - logoSize) / 2;
+                        const y = (canvas.height - logoSize) / 2;
+
+                        // Draw white background for logo
+                        ctx.fillStyle = backgroundColor.value;
+                        ctx.fillRect(x, y, logoSize, logoSize);
+
+                        // Draw logo with rounded corners
+                        const radius = logoSize * 0.1;
+                        ctx.beginPath();
+                        ctx.moveTo(x + radius, y);
+                        ctx.lineTo(x + logoSize - radius, y);
+                        ctx.quadraticCurveTo(x + logoSize, y, x + logoSize, y + radius);
+                        ctx.lineTo(x + logoSize, y + logoSize - radius);
+                        ctx.quadraticCurveTo(x + logoSize, y + logoSize, x + logoSize - radius, y + logoSize);
+                        ctx.lineTo(x + radius, y + logoSize);
+                        ctx.quadraticCurveTo(x, y + logoSize, x, y + logoSize - radius);
+                        ctx.lineTo(x, y + radius);
+                        ctx.quadraticCurveTo(x, y, x + radius, y);
+                        ctx.closePath();
+                        ctx.clip();
+
+                        // Draw logo
+                        ctx.drawImage(logo, x, y, logoSize, logoSize);
+                    };
+                    logo.src = e.target.result;
+                };
+                reader.readAsDataURL(logoFile);
+            }
+
+            function downloadAsPNG() {
+                const canvas = qrcode.firstChild;
+                const link = document.createElement('a');
+                link.download = 'qr-code.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+
+            function downloadAsSVG() {
+                const content = getContent();
+                QRCode.toString(content, {
+                    type: 'svg',
+                    color: {
+                        dark: foregroundColor.value,
+                        light: backgroundColor.value
+                    },
+                    margin: parseInt(margin.value),
+                    errorCorrectionLevel: errorCorrection.value
+                }, function(error, svg) {
+                    if (error) {
+                        previewStatus.className = 'alert alert-danger';
+                        previewStatus.textContent = 'Error generating SVG: ' + error.message;
+                        return;
+                    }
+
+                    const link = document.createElement('a');
+                    link.download = 'qr-code.svg';
+                    link.href = 'data:image/svg+xml;base64,' + btoa(svg);
+                    link.click();
+                });
+            }
+        }
+    </script>
+    <style>
+        #qrcode {
+            display: inline-block;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        #qrcode canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</body>
+</html> 

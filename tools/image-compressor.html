@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Compressor.js -->
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.1.1/dist/compressor.min.js"></script>
+</head>
+<body>
+    <!-- Header will be dynamically loaded here -->
+    <div id="header-container"></div>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Image Compressor</h1>
+                        
+                        <!-- Tool Description -->
+                        <p class="text-muted text-center mb-4">
+                            Compress your images while maintaining quality. Supports JPG, PNG, and WebP formats.
+                        </p>
+
+                        <!-- File Upload -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Upload Image</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <div class="mb-3">
+                                        <label for="imageInput" class="form-label">Select an image to compress</label>
+                                        <input type="file" class="form-control" id="imageInput" accept="image/*">
+                                    </div>
+                                    <div class="alert alert-info" id="uploadStatus">
+                                        Drag and drop an image or click to select one.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compression Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Compression Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quality" class="form-label">Quality</label>
+                                            <input type="range" class="form-range" id="quality" min="0" max="1" step="0.1" value="0.8">
+                                            <div class="text-center" id="qualityValue">80%</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxWidth" class="form-label">Max Width (px)</label>
+                                            <input type="number" class="form-control" id="maxWidth" value="1920">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="maxHeight" class="form-label">Max Height (px)</label>
+                                            <input type="number" class="form-control" id="maxHeight" value="1080">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="outputFormat" class="form-label">Output Format</label>
+                                            <select class="form-select" id="outputFormat">
+                                                <option value="auto">Auto (Same as input)</option>
+                                                <option value="image/jpeg">JPEG</option>
+                                                <option value="image/png">PNG</option>
+                                                <option value="image/webp">WebP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Preview</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" id="downloadButton" disabled>
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="resetButton">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h6 class="text-center">Original</h6>
+                                            <div class="preview-container">
+                                                <img id="originalPreview" class="img-fluid" style="display: none;">
+                                                <div class="text-center" id="originalInfo"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h6 class="text-center">Compressed</h6>
+                                            <div class="preview-container">
+                                                <img id="compressedPreview" class="img-fluid" style="display: none;">
+                                                <div class="text-center" id="compressedInfo"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info" id="compressionStatus">
+                                    Upload an image to see the preview.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Batch Processing -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Batch Processing</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="batchInput" class="form-label">Select multiple images</label>
+                                    <input type="file" class="form-control" id="batchInput" accept="image/*" multiple>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Original Size</th>
+                                                <th>Compressed Size</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="batchTableBody">
+                                            <!-- Batch processing results will be shown here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button class="btn btn-primary" id="downloadAllButton" disabled>
+                                        <i class="fas fa-download"></i> Download All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Space -->
+                <div class="ad-space mt-4">
+                    Ad Space
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be dynamically loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load components
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initializeImageCompressor();
+        });
+
+        function initializeImageCompressor() {
+            // DOM Elements
+            const imageInput = document.getElementById('imageInput');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const quality = document.getElementById('quality');
+            const qualityValue = document.getElementById('qualityValue');
+            const maxWidth = document.getElementById('maxWidth');
+            const maxHeight = document.getElementById('maxHeight');
+            const outputFormat = document.getElementById('outputFormat');
+            const originalPreview = document.getElementById('originalPreview');
+            const compressedPreview = document.getElementById('compressedPreview');
+            const originalInfo = document.getElementById('originalInfo');
+            const compressedInfo = document.getElementById('compressedInfo');
+            const compressionStatus = document.getElementById('compressionStatus');
+            const downloadButton = document.getElementById('downloadButton');
+            const resetButton = document.getElementById('resetButton');
+            const batchInput = document.getElementById('batchInput');
+            const batchTableBody = document.getElementById('batchTableBody');
+            const downloadAllButton = document.getElementById('downloadAllButton');
+
+            // Current state
+            let currentFile = null;
+            let compressedBlob = null;
+            let batchFiles = [];
+
+            // Quality slider handler
+            quality.addEventListener('input', () => {
+                qualityValue.textContent = `${Math.round(quality.value * 100)}%`;
+                if (currentFile) {
+                    compressImage(currentFile);
+                }
+            });
+
+            // Reset button handler
+            resetButton.addEventListener('click', () => {
+                imageInput.value = '';
+                currentFile = null;
+                compressedBlob = null;
+                originalPreview.style.display = 'none';
+                compressedPreview.style.display = 'none';
+                originalInfo.textContent = '';
+                compressedInfo.textContent = '';
+                compressionStatus.className = 'alert alert-info';
+                compressionStatus.textContent = 'Upload an image to see the preview.';
+                downloadButton.disabled = true;
+            });
+
+            // Download button handler
+            downloadButton.addEventListener('click', () => {
+                if (compressedBlob) {
+                    const url = URL.createObjectURL(compressedBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `compressed_${currentFile.name}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            });
+
+            // Image input handler
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+            });
+
+            // Drag and drop handlers
+            const dropZone = document.querySelector('.card-body');
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-primary');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('border-primary');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleFile(file);
+                }
+            });
+
+            // Batch processing handlers
+            batchInput.addEventListener('change', (e) => {
+                batchFiles = Array.from(e.target.files);
+                updateBatchTable();
+            });
+
+            downloadAllButton.addEventListener('click', () => {
+                batchFiles.forEach(file => {
+                    if (file.compressed) {
+                        const url = URL.createObjectURL(file.compressed);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `compressed_${file.name}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                });
+            });
+
+            // Helper functions
+            function handleFile(file) {
+                currentFile = file;
+                compressedBlob = null;
+
+                // Show original image
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    originalPreview.src = e.target.result;
+                    originalPreview.style.display = 'block';
+                    originalInfo.textContent = `Size: ${formatFileSize(file.size)}`;
+                };
+                reader.readAsDataURL(file);
+
+                // Compress image
+                compressImage(file);
+            }
+
+            function compressImage(file) {
+                const options = {
+                    quality: parseFloat(quality.value),
+                    maxWidth: parseInt(maxWidth.value),
+                    maxHeight: parseInt(maxHeight.value),
+                    mimeType: outputFormat.value === 'auto' ? file.type : outputFormat.value,
+                    success: (result) => {
+                        compressedBlob = result;
+                        compressedPreview.src = URL.createObjectURL(result);
+                        compressedPreview.style.display = 'block';
+                        compressedInfo.textContent = `Size: ${formatFileSize(result.size)}`;
+                        compressionStatus.className = 'alert alert-success';
+                        compressionStatus.textContent = `Compression complete! Reduced by ${Math.round((1 - result.size / file.size) * 100)}%`;
+                        downloadButton.disabled = false;
+                    },
+                    error: (err) => {
+                        compressionStatus.className = 'alert alert-danger';
+                        compressionStatus.textContent = `Error: ${err.message}`;
+                    }
+                };
+
+                compressionStatus.className = 'alert alert-info';
+                compressionStatus.textContent = 'Compressing image...';
+                new Compressor(file, options);
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function updateBatchTable() {
+                batchTableBody.innerHTML = '';
+                batchFiles.forEach((file, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${file.name}</td>
+                        <td>${formatFileSize(file.size)}</td>
+                        <td id="compressedSize${index}">-</td>
+                        <td id="status${index}">Pending</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary download-single" data-index="${index}" disabled>
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </td>
+                    `;
+                    batchTableBody.appendChild(row);
+
+                    // Compress the file
+                    const options = {
+                        quality: parseFloat(quality.value),
+                        maxWidth: parseInt(maxWidth.value),
+                        maxHeight: parseInt(maxHeight.value),
+                        mimeType: outputFormat.value === 'auto' ? file.type : outputFormat.value,
+                        success: (result) => {
+                            file.compressed = result;
+                            document.getElementById(`compressedSize${index}`).textContent = formatFileSize(result.size);
+                            document.getElementById(`status${index}`).textContent = 'Complete';
+                            document.querySelector(`.download-single[data-index="${index}"]`).disabled = false;
+                            updateDownloadAllButton();
+                        },
+                        error: (err) => {
+                            document.getElementById(`status${index}`).textContent = 'Error';
+                            document.getElementById(`status${index}`).className = 'text-danger';
+                        }
+                    };
+
+                    new Compressor(file, options);
+                });
+            }
+
+            function updateDownloadAllButton() {
+                const allCompressed = batchFiles.every(file => file.compressed);
+                downloadAllButton.disabled = !allCompressed;
+            }
+
+            // Add event listeners for batch download buttons
+            batchTableBody.addEventListener('click', (e) => {
+                if (e.target.closest('.download-single')) {
+                    const index = e.target.closest('.download-single').dataset.index;
+                    const file = batchFiles[index];
+                    if (file.compressed) {
+                        const url = URL.createObjectURL(file.compressed);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `compressed_${file.name}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                }
+            });
+        }
+    </script>
+    <style>
+        .preview-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+        }
+        .preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .card-body {
+            transition: border-color 0.3s ease;
+        }
+        .border-primary {
+            border: 2px dashed #0d6efd !important;
+        }
+    </style>
+</body>
+</html> 
